@@ -1,12 +1,8 @@
 # WeiboSpider
 **@ Zeng Ying, Pan Ziyang, Zhong Shanshan, Huang Zhishan, Yu Yixia, Chen Lehua**
-
-
-
+<br>
 >  mass表示批量，不带mass主要用于调试
-
-
-
+<br>
 ## 使用：
 
 1. 人工获取一些大v的用户id
