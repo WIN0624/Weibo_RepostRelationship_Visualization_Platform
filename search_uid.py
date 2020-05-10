@@ -4,10 +4,12 @@
 # output: user_info字典，相关参数有：关注数量，粉丝数量，性别，用户id，微博名称，认证信息
 # ***************************************************************************
 
+# -*- coding:UTF-8 -*-
+
 import requests
 import json
-# import sys
-# from imp import reload
+import sys
+from imp import reload
 
 def pageSearchFor_uid(searchQuery):
     try:
@@ -39,10 +41,12 @@ def pageSearchFor_uid(searchQuery):
 
     return info
 
-#if __name__ == "__main__":
+# *************************************
+# 测试用
+# if __name__ == "__main__":
 #     reload(sys)
 #     sys.setdefaultencoding('utf8') 
-#     info = pageSearchFor_uid('aTalyor')
+#     info = pageSearchFor_uid('')
 #     print(info['uid'])
 #     print(info['followers_count'])
 #     print(info['follow_count'])
@@ -51,3 +55,4 @@ def pageSearchFor_uid(searchQuery):
 #     print(info['screen_name'])
 #     print(info['verified'])                
 #     print(info['profile_url'])
+# *************************************
