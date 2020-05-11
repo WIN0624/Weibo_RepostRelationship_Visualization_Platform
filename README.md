@@ -3,8 +3,8 @@
 <br>
 >  mass表示批量，不带mass主要用于调试
 <br>
-## 使用：
 
+## 使用：
 1. 人工获取一些大v的用户id
 2. 运行get_wbid.py,获得大v用户的微博id
 3. 运行relationship.py,得到用户之间的转发关系，以[用户id，用户微博id，粉丝id，粉丝微博id]存储
