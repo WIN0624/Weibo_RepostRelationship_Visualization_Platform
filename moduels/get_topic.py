@@ -11,6 +11,7 @@ import requests
 from lxml import etree
 import csv
 import json
+import pandas as pd
 
 def get_hot():
     url = "https://s.weibo.com/top/summary?cate=realtimehot"
@@ -65,7 +66,11 @@ def get_hot():
             with open(path,'a') as f:
                 wt = csv.writer(f)
                 wt.writerows([[num,title[0],hot_score[0]]])
-    return path
+                
+    csv_data = pd.read_csv(path,encoding='gbk')
+    csv_df = pd.DataFrame(csv_data)
+    csv_dict = csv_df.to_dict(orient="dict")
+    return csv_df,csv_dict,path
 
 def hot2json(csv_file):
 #    time_name = time.strftime('%Y%m%d%H',time.localtime())
@@ -84,6 +89,6 @@ def hot2json(csv_file):
         cnt += 1
     print("finish")
 
-if __name__ == '__main__':
-    path = get_hot()
-    hot2json(path)
+#if __name__ == '__main__':
+#    csv_df, csv_dict, path = get_hot()
+#    hot2json(path)
