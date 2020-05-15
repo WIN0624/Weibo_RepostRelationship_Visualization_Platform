@@ -1,0 +1,89 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 11 20:34:41 2020
+
+@author: Le_C
+"""
+
+import os
+import time
+import requests
+from lxml import etree
+import csv
+import json
+
+def get_hot():
+    url = "https://s.weibo.com/top/summary?cate=realtimehot"
+    headers={
+        'Host': 's.weibo.com',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'Connection': 'keep-alive',
+        'Referer': 'https://weibo.com/',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'
+    }
+
+    r = requests.get(url,headers=headers)
+    print(r.status_code)
+    
+    html_xpath = etree.HTML(r.text)
+    data = html_xpath.xpath('//*[@id="pl_top_realtimehot"]/table/tbody/tr/td[2]')
+    num = -1
+    
+    # 解决存储路径
+#    time_name = time.strftime('%Y{y}%m{m}%d{d}%H{h}',time.localtime()).format(y='年', m='月', d='日',h='点')
+    time_name = time.strftime('%Y%m%d%H',time.localtime())
+    # time_path = time.strftime('%Y{y}%m{m}%d{d}',time.localtime()).format(y='年', m='月', d='日')
+    # time_name = time.strftime('%Y{y}%m{m}%d{d}%H{h}',time.localtime()).format(y='年', m='月', d='日',h='点')
+    # root = "./" + time_path + "/"
+    # path = root + time_name + '.md'
+    # if not os.path.exists(root):
+    #     os.mkdir(root)
+    
+    # 最终文件存储位置
+    #root = all_path  + "/"
+    path =time_name + '.csv'
+    
+    #print(path)
+    # 文件头部信息
+    with open(path,'a',newline='') as f:
+        wt = csv.writer(f)
+        wt.writerow(['index','topic','score'])
+    f.close()
+    
+    for tr in (data):
+        title = tr.xpath('./a/text()')
+        hot_score = tr.xpath('./span/text()')
+        
+        num += 1
+    
+        # 过滤第 0 条
+        if num == 0:
+            pass
+        else:
+            with open(path,'a') as f:
+                wt = csv.writer(f)
+                wt.writerows([[num,title[0],hot_score[0]]])
+    return path
+
+def hot2json(csv_file):
+#    time_name = time.strftime('%Y%m%d%H',time.localtime())
+    json_file =csv_file[:-4] + '.json'
+    csv_file = open(csv_file,'r')
+    json_file = open(json_file,'w')
+    fieldnames=('index','topic','score')
+    reader = csv.DictReader(csv_file,fieldnames)
+    cnt=0
+    for row in reader:
+        if cnt == 0:
+            pass
+        else:
+            json.dump(row,json_file,ensure_ascii=False)
+            json_file.write('\n')
+        cnt += 1
+    print("finish")
+
+if __name__ == '__main__':
+    path = get_hot()
+    hot2json(path)
