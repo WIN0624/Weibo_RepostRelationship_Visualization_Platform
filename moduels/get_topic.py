@@ -69,8 +69,9 @@ def get_hot():
                 
     csv_data = pd.read_csv(path,encoding='gbk')
     csv_df = pd.DataFrame(csv_data)
+    topic_list = csv_df['topic'].tolist()
     csv_dict = csv_df.to_dict(orient="dict")
-    return csv_df,csv_dict,path
+    return csv_df,csv_dict,path,topic_list
 
 def hot2json(csv_file):
 #    time_name = time.strftime('%Y%m%d%H',time.localtime())
