@@ -23,7 +23,7 @@ This is a document for our development, which contains the updates for Modeuls a
 2. Add first edition of `get_query_wbid.py`.
 
 
-<br><br><br>
+
 
 ## 日志
 ### 2020年5月15日
