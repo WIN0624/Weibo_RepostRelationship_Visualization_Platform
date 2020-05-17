@@ -14,12 +14,14 @@ This is a document for our development, which contains the updates for Modeuls a
 
 ## Logs
 ### MAY 15, 2020
-1. add memebers responsible for front-end display.
-2. add moduels of `get_usr_id.py` and `get_topic.py`.
+1. Add memebers responsible for front-end display.
+2. Add moduels of `get_usr_id.py` and `get_topic.py`.
 
 ### MAY 17, 2020
 
-add return topic list in `get_topic.py`
+1. Add return topic list in `get_topic.py`  
+2. Add first edition of `get_query_wbid.py`. Later it will be updated with the function of time settings function.
+
 
 <br><br><br>
 
