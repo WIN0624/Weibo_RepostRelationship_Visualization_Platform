@@ -17,12 +17,20 @@ This is a document for our development, which contains the updates for Modeuls a
 1. add memebers responsible for front-end display.
 2. add moduels of `get_usr_id.py` and `get_topic.py`.
 
+### MAY 17, 2020
+
+add return topic list in `get_topic.py`
+
 <br><br><br>
 
 ## 日志
 ### 2020年5月15日
 1. 加入前端组成员。
 2. 增加`get_usr_id.py` 和 `get_topic.py` 模块。
+
+### 2020年5月17日
+
+增加了主题列表作为 `get_topic.py`返回值。
 
 <br><br><br>
 
