@@ -14,13 +14,17 @@ from urllib.parse import quote
 
 
 # 相当于主函数
-def get_query_wbid(topic=False):
+def get_query_wbid(topic=False, json=False):
     search_list = ['新型冠状病毒', 'AI', '经济学', '管理学']
     if topic:
         topic_list = get_hot()[3]
         search_list += topic_list
-    results_list, results_dict = get_info(search_list)
-    return results_list, results_dict
+    results_list = get_info(search_list)[0]
+    if json:
+        results_dict = get_info(search_list)[1]
+        with open('query_id.json', 'w') as f:
+            json.dump(results_dict, f, ensure_ascii=False)
+    return results_list
 
 
 # 输入检索词得到wbid列表
@@ -35,7 +39,7 @@ def get_info(search_list):
         # 将检索词编码，嵌入url得到不同词的url字典
         base_url = get_baseurl(wd)
         # 获取多页该检索词的结果页面
-        for page in range(1, 100):
+        for page in range(1, 3):
             this_url = base_url + str(page)
             try:
                 # add header for the crawler
@@ -73,8 +77,7 @@ def get_baseurl(wd):
     return base_url
 
 
-if __name__ == '__main__':
-    results_dict = get_query_wbid()[1]
-    with open('search.json', 'w') as f:
-        json.dump(results_dict, f, ensure_ascii=False)
-
+# if __name__ == '__main__':
+#    results_dict = get_query_wbid()[1]
+#    with open('search.json', 'w') as f:
+#        json.dump(results_dict, f, ensure_ascii=False)
