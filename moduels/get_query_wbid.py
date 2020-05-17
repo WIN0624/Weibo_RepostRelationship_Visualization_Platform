@@ -19,11 +19,12 @@ def get_query_wbid(topic=False, json=False):
     if topic:
         topic_list = get_hot()[3]
         search_list += topic_list
-    results_list = get_info(search_list)[0]
     if json:
         results_dict = get_info(search_list)[1]
         with open('query_id.json', 'w') as f:
             json.dump(results_dict, f, ensure_ascii=False)
+            
+    results_list = get_info(search_list)[0]
     return results_list
 
 
