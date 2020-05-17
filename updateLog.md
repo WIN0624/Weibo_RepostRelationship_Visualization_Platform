@@ -20,7 +20,7 @@ This is a document for our development, which contains the updates for Modeuls a
 ### MAY 17, 2020
 
 1. Add return topic list in `get_topic.py`  
-2. Add first edition of `get_query_wbid.py`. Later it will be updated with the function of time settings function.
+2. Add first edition of `get_query_wbid.py`.
 
 
 <br><br><br>
@@ -32,7 +32,8 @@ This is a document for our development, which contains the updates for Modeuls a
 
 ### 2020年5月17日
 
-增加了主题列表作为 `get_topic.py`返回值。
+1. 增加了主题列表作为 `get_topic.py`返回值。
+2. 增加`get_query_wbid.py`初版。
 
 <br><br><br>
 
