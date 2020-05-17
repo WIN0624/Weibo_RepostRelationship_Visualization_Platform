@@ -35,7 +35,7 @@ def get_info(search_list):
         # 将检索词编码，嵌入url得到不同词的url字典
         base_url = get_baseurl(wd)
         # 获取多页该检索词的结果页面
-        for page in range(1, 3):
+        for page in range(1, 100):
             this_url = base_url + str(page)
             try:
                 # add header for the crawler
