@@ -79,7 +79,7 @@ def get_fans_info(uid, page=10,write_in_a_file=False):
     return fans_id_list, fans_name_list
 
 
-get_fans_info(1751195602,page=20,write_in_a_file=True)
+
 
 
 
