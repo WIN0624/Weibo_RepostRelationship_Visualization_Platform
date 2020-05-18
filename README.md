@@ -21,6 +21,7 @@
 3. `relationship.py`,用于获取用户之间的转发关系，以[用户id，用户微博id，粉丝id，粉丝微博id]存储
 4. `get_topic.py`用于获取实时热搜主题以及相应热度，提供两种方式存储：csv, json.具体格式[index, topic, score].生成文件命名为 **爬取热搜时间.csv /.json.**
 5. `get_query_wbid`用于根据检索词获取相关微博的id，返回id列表和id字典（以检索词为key），提供存储格式：json格式.
+6. `get_usr_fans.py`用于获取用户的粉丝id以及粉丝名，返回id列表以及名字列表，可生成三个文本文件，分别存储了id、用户名、id与用户名的对应关系
 
 ## 如何安装python依赖？
 我们提供了专门的依赖文档供您一键安装所有python依赖，只需使用

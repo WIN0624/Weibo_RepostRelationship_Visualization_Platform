@@ -36,7 +36,13 @@ This is a document for our development, which contains the updates for Modeuls a
 1. 增加了主题列表作为 `get_topic.py`返回值。
 2. 增加`get_query_wbid.py`初版。
 
-<br><br><br>
+### 2020年5月18日
+
+1. 修复了`get_usr_fans.py`存在的某些用户无法爬取的问题
+
+2. 增加了`get_usr_fan.py`的两项参数`page`和`write_in_a_file`
+
+   <br><br><br>
 
 ## DEVELOPMENT
 
