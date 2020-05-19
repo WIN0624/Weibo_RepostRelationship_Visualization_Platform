@@ -24,7 +24,9 @@ This is a document for our development, which contains the updates for Modeuls a
 
 ### MAY 19, 2020
 
-change hot2json format in `get_topic.py`  
+1. change hot2json format in `get_topic.py`  
+2. move hot2json  into `fileFormatConversion.py`
+3. add input parameter in  `get_topic.py`  and remove path in return.
 
 <br><br><br>
 
@@ -46,7 +48,9 @@ change hot2json format in `get_topic.py`
 
 ### 2020年5月19日
 
-修改`get_topic.py`中hot2json的输出格式。
+1. 修改`get_topic.py`中hot2json的输出格式。
+2. 把`get_topic.py`中hot2json移到`fileFormatConversion.py`
+3. 添加输入boolean型参数conv2jsonadd作为`get_topic.py`  输入参数，移除path作为return。
 
 <br><br><br>
 
