@@ -1,7 +1,7 @@
 # Update Details.
 > **What does the Update Log do?**
-<br><br>
-This is a document for our development, which contains the updates for Modeuls and Fornt-End development.
+> <br><br>
+> This is a document for our development, which contains the updates for Modeuls and Fornt-End development.
 
 <br>
 
@@ -19,9 +19,24 @@ This is a document for our development, which contains the updates for Modeuls a
 
 ### MAY 17, 2020
 
-1. Add return topic list in `get_topic.py`  
+1. Add return topic list in `get_topic.py`.
 2. Add first edition of `get_query_wbid.py`.
 
+### MAY 18, 2020
+1. some troubles in `get_user_fans.py` that some WeiBo users cannot be crawled are fixed.
+2. add two params named *`page`* and *`write_in_a_file`* in `get_usr_fans.py`.
+
+### MAY 19, 2020
+
+1. change hot2json format in `get_topic.py`.
+1. change hot2json format in `get_topic.py`  
+2. move hot2json  into `fileFormatConversion.py`
+3. add input parameter in  `get_topic.py`  and remove path in return.
+
+### MAY 19, 2020
+1. add `echarts.min.js` in `frontEnd`
+2. add `jquery.min.js` in `frontEnd`
+3. add `repostRelation.js` in `frontEnd`,some problems are not solved.
 
 <br><br><br>
 
@@ -29,12 +44,30 @@ This is a document for our development, which contains the updates for Modeuls a
 ## 日志
 ### 2020年5月15日
 1. 加入前端组成员。
-2. 增加`get_usr_id.py` 和 `get_topic.py` 模块。
+2. 增加 `get_usr_id.py` 和 `get_topic.py` 模块。
 
 ### 2020年5月17日
 
-1. 增加了主题列表作为 `get_topic.py`返回值。
-2. 增加`get_query_wbid.py`初版。
+1. 增加了主题列表作为 `get_topic.py` 返回值。
+2. 增加 `get_query_wbid.py` 初版。
+
+### 2020年5月18日
+
+1. 修复了 `get_usr_fans.py` 存在的某些用户无法爬取的问题。
+2. 增加了 `get_usr_fans.py` 的两项参数 `page` 和 `write_in_a_file`。
+
+### 2020年5月19日
+
+1. 修改 `get_topic.py` 中hot2json的输出格式。
+1. 修改`get_topic.py`中hot2json的输出格式。
+2. 把`get_topic.py`中hot2json移到`fileFormatConversion.py`
+3. 添加输入boolean型参数conv2jsonadd作为`get_topic.py`  输入参数，移除path作为return。
+
+### 2020年5月19日
+
+1. 上传文件 `echarts.min.js` 
+2. 上传文件 `jquery.min.js` 
+3. 上传`repostRelation.js`，部分问题待解决
 
 <br><br><br>
 

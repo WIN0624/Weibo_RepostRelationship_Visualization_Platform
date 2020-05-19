@@ -10,10 +10,10 @@ import time
 import requests
 from lxml import etree
 import csv
-import json
 import pandas as pd
+from fileFormatConversion import hot2json 
 
-def get_hot():
+def get_hot(conver2json):
     url = "https://s.weibo.com/top/summary?cate=realtimehot"
     headers={
         'Host': 's.weibo.com',
@@ -71,25 +71,10 @@ def get_hot():
     csv_df = pd.DataFrame(csv_data)
     topic_list = csv_df['topic'].tolist()
     csv_dict = csv_df.to_dict(orient="dict")
-    return csv_df,csv_dict,path,topic_list
-
-def hot2json(csv_file):
-#    time_name = time.strftime('%Y%m%d%H',time.localtime())
-    json_file =csv_file[:-4] + '.json'
-    csv_file = open(csv_file,'r')
-    json_file = open(json_file,'w')
-    fieldnames=('index','topic','score')
-    reader = csv.DictReader(csv_file,fieldnames)
-    cnt=0
-    for row in reader:
-        if cnt == 0:
-            pass
-        else:
-            json.dump(row,json_file,ensure_ascii=False)
-            json_file.write('\n')
-        cnt += 1
-    print("finish")
-
-#if __name__ == '__main__':
-#    csv_df, csv_dict, path = get_hot()
-#    hot2json(path)
+    if(conver2json):
+        hot2json(path)
+    return csv_df,csv_dict,topic_list
+    
+# if __name__ == '__main__':
+#     conver2json = True
+#     csv_df, csv_dict, topic_list = get_hot(conver2json)

@@ -45,3 +45,22 @@ def csv_to_json(csv_filename,json_filename):
         f.write(s)
     os.remove('data_fs.json')
     os.remove('data_user.json')
+
+def hot2json(csv_file):
+#    time_name = time.strftime('%Y%m%d%H',time.localtime())
+    json_file =csv_file[:-4] + '.json'
+    csv_file = open(csv_file,'r')
+    json_file = open(json_file,'w')
+    fieldnames=('index','topic','score')
+    reader = csv.DictReader(csv_file,fieldnames)
+    cnt=0
+    json_file.write('[')
+    for row in reader:
+        if cnt == 0:
+            pass
+        else:
+            json.dump(row,json_file,ensure_ascii=False)
+            json_file.write(','+'\n')
+        cnt += 1
+    json_file.write(']')
+    print("finish")
