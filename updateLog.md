@@ -22,6 +22,9 @@ This is a document for our development, which contains the updates for Modeuls a
 1. Add return topic list in `get_topic.py`  
 2. Add first edition of `get_query_wbid.py`.
 
+### MAY 19, 2020
+
+change hot2json format in `get_topic.py`  
 
 <br><br><br>
 
@@ -39,10 +42,13 @@ This is a document for our development, which contains the updates for Modeuls a
 ### 2020年5月18日
 
 1. 修复了`get_usr_fans.py`存在的某些用户无法爬取的问题
-
 2. 增加了`get_usr_fan.py`的两项参数`page`和`write_in_a_file`
 
-   <br><br><br>
+### 2020年5月19日
+
+修改`get_topic.py`中hot2json的输出格式。
+
+<br><br><br>
 
 ## DEVELOPMENT
 

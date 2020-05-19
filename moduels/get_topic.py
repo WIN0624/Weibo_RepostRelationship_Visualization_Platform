@@ -81,15 +81,17 @@ def hot2json(csv_file):
     fieldnames=('index','topic','score')
     reader = csv.DictReader(csv_file,fieldnames)
     cnt=0
+    json_file.write('[')
     for row in reader:
         if cnt == 0:
             pass
         else:
             json.dump(row,json_file,ensure_ascii=False)
-            json_file.write('\n')
+            json_file.write(','+'\n')
         cnt += 1
+    json_file.write(']')
     print("finish")
-
+    
 #if __name__ == '__main__':
-#    csv_df, csv_dict, path = get_hot()
+#    csv_df, csv_dict, path,topic_list = get_hot()
 #    hot2json(path)
