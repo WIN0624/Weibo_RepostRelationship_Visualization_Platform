@@ -32,6 +32,7 @@
 1. change hot2json format in `get_topic.py`  
 2. move hot2json  into `fileFormatConversion.py`
 3. add input parameter in  `get_topic.py`  and remove path in return.
+4. replace `get_query_wbid.py` with `get_query_wb.py`. The latter provides user id, user screen_name and a method to store info with the csv format.
 
 ### MAY 19, 2020
 1. add `echarts.min.js` in `frontEnd`
@@ -62,6 +63,7 @@
 1. 修改`get_topic.py`中hot2json的输出格式。
 2. 把`get_topic.py`中hot2json移到`fileFormatConversion.py`
 3. 添加输入boolean型参数conv2jsonadd作为`get_topic.py`  输入参数，移除path作为return。
+4. 用`get_query_wb.py` 替换`get_query_wbid.py`。新增了用户id、用户名两个信息，提供存储为csv格式的方法。
 
 ### 2020年5月19日
 
