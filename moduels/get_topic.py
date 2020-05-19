@@ -75,6 +75,6 @@ def get_hot(conver2json):
         hot2json(path)
     return csv_df,csv_dict,topic_list
     
-if __name__ == '__main__':
-    conver2json = True
-    csv_df, csv_dict, topic_list = get_hot(conver2json)
+# if __name__ == '__main__':
+#     conver2json = True
+#     csv_df, csv_dict, topic_list = get_hot(conver2json)
