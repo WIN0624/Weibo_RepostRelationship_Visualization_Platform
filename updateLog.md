@@ -33,9 +33,10 @@
 2. move hot2json  into `fileFormatConversion.py`
 3. add input parameter in  `get_topic.py`  and remove path in return.
 
-### MAY 20, 2020
+### MAY 19, 2020
 1. add `echarts.min.js` in `frontEnd`
 2. add `jquery.min.js` in `frontEnd`
+3. add `repostRelation.js` in `frontEnd`,some problems are not solved.
 
 <br><br><br>
 
@@ -62,10 +63,11 @@
 2. 把`get_topic.py`中hot2json移到`fileFormatConversion.py`
 3. 添加输入boolean型参数conv2jsonadd作为`get_topic.py`  输入参数，移除path作为return。
 
-### 2020年5月20日
+### 2020年5月19日
 
 1. 上传文件 `echarts.min.js` 
 2. 上传文件 `jquery.min.js` 
+3. 上传`repostRelation.js`，部分问题待解决
 
 <br><br><br>
 
