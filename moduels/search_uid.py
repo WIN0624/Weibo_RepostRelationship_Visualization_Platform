@@ -6,6 +6,10 @@
 
 # -*- coding:UTF-8 -*-
 
+'''
+@author: panzy
+'''
+
 import requests
 import json
 import sys
