@@ -42,6 +42,8 @@
 ### MAY 20, 2020
 1. add 'hottopic_bar.html' in `frontEnd`, visualize hot topic in a bar chart.
 2. add 'hottopic_table.html' in `frontEnd`, visualize hot topic in a table.
+3. add `repostRelation.html` in `frontEnd`
+4. modify`repostRelation.js`in `frontEnd`, add a method to add the source blogger node and solve the problem of duplicate name
 
 <br><br><br>
 
@@ -79,6 +81,8 @@
 
 1. 上传文件 `hottopic_bar.html`，将热搜可视化为柱状图
 2. 上传文件 `hottopic_table.html`，将热搜可视化为一个表格
+3. 上传文件 `repostRelation.html`
+4. 修改`repostRelation.js`，新增添加源博主信息节点的方法，解决name重复的问题
 
 <br><br><br>
 
