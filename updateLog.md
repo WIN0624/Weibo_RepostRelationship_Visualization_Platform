@@ -39,6 +39,10 @@
 2. add `jquery.min.js` in `frontEnd`
 3. add `repostRelation.js` in `frontEnd`,some problems are not solved.
 
+### MAY 20, 2020
+1. add 'hottopic_bar.html' in `frontEnd`, visualize hot topic in a bar chart.
+2. add 'hottopic_table.html' in `frontEnd`, visualize hot topic in a table.
+
 <br><br><br>
 
 
@@ -70,6 +74,11 @@
 1. 上传文件 `echarts.min.js` 
 2. 上传文件 `jquery.min.js` 
 3. 上传`repostRelation.js`，部分问题待解决
+
+### 2020年5月20日
+
+1. 上传文件 `hottopic_bar.html`，将热搜可视化为柱状图
+2. 上传文件 `hottopic_table.html`，将热搜可视化为一个表格
 
 <br><br><br>
 
