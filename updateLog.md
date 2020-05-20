@@ -44,6 +44,7 @@
 2. add 'hottopic_table.html' in `frontEnd`, visualize hot topic in a table.
 3. add `repostRelation.html` in `frontEnd`
 4. modify`repostRelation.js`in `frontEnd`, add a method to add the source blogger node and solve the problem of duplicate name
+5. add proxypool in `get_topic.py`
 
 <br><br><br>
 
@@ -83,6 +84,7 @@
 2. 上传文件 `hottopic_table.html`，将热搜可视化为一个表格
 3. 上传文件 `repostRelation.html`
 4. 修改`repostRelation.js`，新增添加源博主信息节点的方法，解决name重复的问题
+5. `get_topic.py`增加代理池
 
 <br><br><br>
 
