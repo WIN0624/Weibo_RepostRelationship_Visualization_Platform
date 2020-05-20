@@ -14,6 +14,8 @@ import pandas as pd
 from fileFormatConversion import hot2json 
 
 def get_hot(conver2json):
+    proxypool_url = 'http://127.0.0.1:5555/random'
+    proxies = {'http': 'http://' + requests.get(proxypool_url).text.strip()}
     url = "https://s.weibo.com/top/summary?cate=realtimehot"
     headers={
         'Host': 's.weibo.com',
@@ -25,8 +27,8 @@ def get_hot(conver2json):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'
     }
 
-    r = requests.get(url,headers=headers)
-    print(r.status_code)
+    r = requests.get(url,headers=headers,proxies=proxies)
+    # print(r.status_code)
     
     html_xpath = etree.HTML(r.text)
     data = html_xpath.xpath('//*[@id="pl_top_realtimehot"]/table/tbody/tr/td[2]')
