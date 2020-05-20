@@ -55,7 +55,7 @@ This is a document for our development, which contains the updates for Modeuls a
 
 1. 修改 `get_topic.py` 中hot2json的输出格式。
 1. 修改`get_topic.py`中hot2json的输出格式。
-2. 把`get_topic.py`中hot2json移到`fileFormatConversion.py`
+2. 把`get_topic.py`中hot2json移到`fileFormatConversion.py`。
 3. 添加输入boolean型参数conv2jsonadd作为`get_topic.py`  输入参数，移除path作为return。
 
 <br><br><br>
