@@ -20,7 +20,7 @@ function color16(node){
 }
 
 // json中screen_name：源博主名、fs_screen_name：转发博主名、（？）：粉丝数、level：转发层级、bw_id：源博文id、fs_bw_id：转发博文id
-$.getJSON('rp_relationship2.0.json', function (json) {
+$.getJSON('rp_relationship.json', function (json) {
     var newNode = {
         name: json.nodes[0].screen_name+"\n("+json.nodes[0].bw_id+")",
         itemStyle: {
