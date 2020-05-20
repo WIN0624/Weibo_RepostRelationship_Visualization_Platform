@@ -1,36 +1,56 @@
+(function(){
 var myChart = echarts.init(document.getElementById('main'));
 myChart.showLoading();
 
 //分层实现十六进制颜色固定
 function color16(node){
     var color;
-    if(node.level==0){
-        color='#dc143c';
-    }else if (node.level==1){
-        color='#c71969';
+    if (node.level==1){
+        color='#0000FF';
     }else if (node.level==2){
-        color='#4f19c7';
+        color='#2E8B57';
+    }else if (node.level==3){
+        color='#FFA500';
+    }else if (node.level==4){
+        color='#FF00FF';
     }else{
         color='#000';
     }
     return color;
 }
 
-// 待数据完善后，添加展示粉丝数,用于给series的data中的name赋值
-function tip(node){
-    return node.fs_screen_name
-}
-
-// （未实现）想要一个方法去除json数据中fs_screen_name重复以及fs_screen_name为Null的数据,否则可视化图表会报错
-  
-// json中fs_screen_name：转发用户名、粉丝数、reposts_count：转发量、level：转发层级
-// 如果要显示源博主，目前需要手动添加第0层的节点
-$.getJSON('data.json', function (json) {
-    myChart.hideLoading();
-    myChart.setOption(option = {
-        title: {
-            text: 'Repost Relationship'
+// json中screen_name：源博主名、fs_screen_name：转发博主名、（？）：粉丝数、level：转发层级、bw_id：源博文id、fs_bw_id：转发博文id
+$.getJSON('rp_relationship2.0.json', function (json) {
+    var newNode = {
+        name: json.nodes[0].screen_name+"\n("+json.nodes[0].bw_id+")",
+        itemStyle: {
+            color:'#DC143C'
         },
+        symbolSize: 250
+    };
+    var newLink = {
+        source: json.nodes[0].fs_screen_name+"\n("+json.nodes.fs_bw_id+")",
+        target: newNode.name
+    };
+    myChart.hideLoading();
+    option = {
+        title: {
+            text: 'Retweet Relationship'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function (params) {  //连接线上提示文字格式化
+                if (params.data.source) {
+                   return params.data.source + '->' + params.data.target ;
+                }
+                else {
+                    return params.id;
+                }
+            }
+        },
+        legend: [{
+            show:false
+        }],
         animation: false,
         series : [
             { 
@@ -38,9 +58,7 @@ $.getJSON('data.json', function (json) {
                 layout: 'force',
                 data: json.nodes.map(function (node) {
                     return {
-                        id: node.fs_screen_name,
-                        name: node.fs_screen_name,
-                        // 待数据完善，使用tip(node)方法显示name
+                        name: node.fs_screen_name+"\n("+node.fs_bw_id+")",
                         symbolSize: 50,
                         // 待数据完善，用粉丝数确定圆的大小
                         itemStyle: {
@@ -50,8 +68,8 @@ $.getJSON('data.json', function (json) {
                 }),
                 edges: json.nodes.map(function (edge) {
                     return {
-                        source: edge.screen_name,
-                        target: edge.fs_screen_name
+                        source: edge.screen_name+"\n("+edge.bw_id+")",
+                        target: edge.fs_screen_name+"\n("+edge.fs_bw_id+")"
                     };
                 }),
                 emphasis: {
@@ -81,5 +99,16 @@ $.getJSON('data.json', function (json) {
                draggable:true
             }
         ]
-    }, true);
+    };
+    //增加缺失的根节点
+    myChart.setOption(option);
+    function addnode(newNode,newLink,option){
+        option.series[0].data.push(newNode);
+        option.series[0].edges.push(newLink);
+        option.animation = true;
+        myChart.setOption(option,true);
+        window.onresize = addnode;
+    }
+    addnode(newNode,newLink,option);
 });
+})(); 
