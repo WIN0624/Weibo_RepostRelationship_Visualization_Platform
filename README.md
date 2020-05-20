@@ -28,7 +28,7 @@
     3. `IDRelationship.py` ,用于互相获取微博中复杂的内容识别ID关系，例如您可以通过输入用户微博ID获得其所有的微博博文ID。
     4. `get_topic.py` 用于获取实时热搜主题以及相应热度，提供两种方式存储：csv, json. *具体格式`[index, topic, score]`* 
     生成文件命名为 **爬取热搜时间.csv /.json** 
-    5. `get_query_wbid`用于根据检索词获取相关微博的id，返回id列表和id字典（以检索词为key），提供存储格式：json格式.
+    5. `get_query_wb`用于根据检索词获取相关微博的id、用户id和用户名，提供存储格式：csv格式和json格式.
     6. `get_usr_fans.py`用于获取用户的粉丝id以及粉丝名，返回id列表以及名字列表，可生成三个文本文件，分别存储了id、用户名、id与用户名的对应关系
     7. `additionalFeatures.py` 用于存储一些额外的微博特征的识别方法。现可提供对微博博文的原创性识别功能。
     8. `fileFormatConversion.py` 为部分csv输出文件提供转换为json格式的功能，在相关内容爬取模块的输出部分会被自动调用。

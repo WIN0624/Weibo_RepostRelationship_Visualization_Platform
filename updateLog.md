@@ -1,7 +1,7 @@
 # Update Details.
 > **What does the Update Log do?**
-<br><br>
-This is a document for our development, which contains the updates for Modeuls and Fornt-End development.
+> <br><br>
+> This is a document for our development, which contains the updates for Modeuls and Fornt-End development.
 
 <br>
 
@@ -32,6 +32,18 @@ This is a document for our development, which contains the updates for Modeuls a
 1. change hot2json format in `get_topic.py`  
 2. move hot2json  into `fileFormatConversion.py`
 3. add input parameter in  `get_topic.py`  and remove path in return.
+4. replace `get_query_wbid.py` with `get_query_wb.py`. The latter provides user id, user screen_name and a method to store info with the csv format.
+
+### MAY 19, 2020
+1. add `echarts.min.js` in `frontEnd`
+2. add `jquery.min.js` in `frontEnd`
+3. add `repostRelation.js` in `frontEnd`,some problems are not solved.
+
+### MAY 20, 2020
+1. add 'hottopic_bar.html' in `frontEnd`, visualize hot topic in a bar chart.
+2. add 'hottopic_table.html' in `frontEnd`, visualize hot topic in a table.
+3. add `repostRelation.html` in `frontEnd`
+4. modify`repostRelation.js`in `frontEnd`, add a method to add the source blogger node and solve the problem of duplicate name
 
 <br><br><br>
 
@@ -57,6 +69,20 @@ This is a document for our development, which contains the updates for Modeuls a
 1. 修改`get_topic.py`中hot2json的输出格式。
 2. 把`get_topic.py`中hot2json移到`fileFormatConversion.py`。
 3. 添加输入boolean型参数conv2jsonadd作为`get_topic.py`  输入参数，移除path作为return。
+4. 用`get_query_wb.py` 替换`get_query_wbid.py`。新增了用户id、用户名两个信息，提供存储为csv格式的方法。
+
+### 2020年5月19日
+
+1. 上传文件 `echarts.min.js` 
+2. 上传文件 `jquery.min.js` 
+3. 上传`repostRelation.js`，部分问题待解决
+
+### 2020年5月20日
+
+1. 上传文件 `hottopic_bar.html`，将热搜可视化为柱状图
+2. 上传文件 `hottopic_table.html`，将热搜可视化为一个表格
+3. 上传文件 `repostRelation.html`
+4. 修改`repostRelation.js`，新增添加源博主信息节点的方法，解决name重复的问题
 
 <br><br><br>
 
