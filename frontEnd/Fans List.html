@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fans List</title>
+</head>
+<body>
+<h2>Fans List</h2>
+<p id="demo"></p>	
+<!--引入 本地data.json-->
+<script type="text/javascript" src="data.json"></script>
+<script>
+var myObj = JSON.parse(fans_list);
+for(var i=0;i<myObj.length;i++)
+document.getElementById("demo").innerHTML += (i+1)+".  "+myObj[i].name + "<br>";
+</script> 
+</body>
+</html>
