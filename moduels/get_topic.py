@@ -36,7 +36,7 @@ def get_hot(conver2json):
     
     # 解决存储路径
 #    time_name = time.strftime('%Y{y}%m{m}%d{d}%H{h}',time.localtime()).format(y='年', m='月', d='日',h='点')
-    time_name = time.strftime('%Y%m%d%H',time.localtime())
+    time_name = time.strftime('%Y%m%d%H%M',time.localtime())
     # time_path = time.strftime('%Y{y}%m{m}%d{d}',time.localtime()).format(y='年', m='月', d='日')
     # time_name = time.strftime('%Y{y}%m{m}%d{d}%H{h}',time.localtime()).format(y='年', m='月', d='日',h='点')
     # root = "./" + time_path + "/"
