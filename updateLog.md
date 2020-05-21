@@ -49,6 +49,8 @@
 ### MAY 21, 2020
 
 1. add longText in `get_query_wbid.py`
+2. add `Fans List.html` in `frontEnd`,display fans'names in a list
+3. delete `test.md` from `frontEnd`
 
 <br><br><br>
 
@@ -93,6 +95,8 @@
 ### 2020年5月21日
 
 1. 增加`get_query_wb.py` 爬取微博正文的功能
+2. 上传文件`Fans List`，展示用列表展示粉丝姓名
+3. 删除测试文档`test.md`
 
 <br><br><br>
 
