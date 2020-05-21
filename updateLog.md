@@ -46,6 +46,10 @@
 4. modify`repostRelation.js`in `frontEnd`, add a method to add the source blogger node and solve the problem of duplicate name
 5. add proxypool in `get_topic.py`
 
+### MAY 21, 2020
+
+1. add longText in `get_query_wbid.py`
+
 <br><br><br>
 
 
@@ -85,6 +89,10 @@
 3. 上传文件 `repostRelation.html`
 4. 修改`repostRelation.js`，新增添加源博主信息节点的方法，解决name重复的问题
 5. `get_topic.py`增加代理池
+
+### 2020年5月21日
+
+1. 增加`get_query_wb.py` 爬取微博正文的功能
 
 <br><br><br>
 
