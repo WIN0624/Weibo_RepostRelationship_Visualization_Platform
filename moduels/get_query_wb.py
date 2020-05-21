@@ -16,7 +16,8 @@ from urllib.parse import quote
 
 # 相当于主函数
 def get_query_wb(topic=False, json=False, csv=False):
-    search_list = ['新型冠状病毒', 'AI', '经济学', '管理学']
+#    search_list = ['新型冠状病毒', 'AI', '经济学', '管理学']
+    search_list = ['新型冠状病毒']
     # 添加50个热搜入检索词
     if topic:
         addTopic(search_list)
@@ -41,7 +42,7 @@ def printJson(results_dict):
 
 
 def printCSV(results_list):
-    headers = ['用户id', '用户名', '微博id']
+    headers = ['用户id', '用户名', '微博id','longText']
     with open('query.csv', 'w', newline='') as f:
         f_csv = csv.DictWriter(f, headers)
         f_csv.writeheader()
@@ -65,7 +66,7 @@ def get_info(search_list):
         base_url = get_baseurl(wd)
         count = 0
         # 获取多页该检索词的结果页面
-        for page in range(1, 20):
+        for page in range(1, 2):
             this_url = base_url + str(page)
             try:
                 r = requests.get(this_url, headers=headers)
@@ -75,7 +76,10 @@ def get_info(search_list):
                 if content.get('ok') == 1:
                     mblogs = jsonpath(content, '$.data.cards..mblog')
                     for mblog in mblogs:
-                        this_dict = {'用户id': mblog['user']['id'], '用户名': mblog['user']['screen_name'], '微博id': mblog['id']}
+                        this_dict = {'用户id': mblog['user']['id'], 
+                                     '用户名': mblog['user']['screen_name'], 
+                                     '微博id': mblog['id'],
+                                     'longText':mblog['longText']['longTextContent']}
                         wd_list.append(this_dict)
                         count += 1
                 if count % 10 == 0:
