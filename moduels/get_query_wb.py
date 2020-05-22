@@ -136,6 +136,6 @@ def standardize_date(created_T):
         stdlist.append(created_at)
     return stdlist
 
-if __name__ == '__main__':
-    te11 = '2020-05-20'
-    get_query_wb(te11,json=True, csv=True)
+# if __name__ == '__main__':
+#     te11 = '2020-05-20'
+#     get_query_wb(te11,json=True, csv=True)
