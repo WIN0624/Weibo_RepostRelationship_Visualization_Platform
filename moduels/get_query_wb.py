@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun May 17 2020
-@author: Ying
+@author: Ying, Le_C
 """
 import csv
 import time
@@ -10,19 +10,21 @@ import random
 import requests
 from jsonpath import jsonpath
 from get_topic import get_hot
-from datetime import datetime
+from datetime import datetime,timedelta
 from urllib.parse import quote
+import sys
 
 
 # 相当于主函数
-def get_query_wb(topic=False, json=False, csv=False):
+def get_query_wb(since_date,topic=False, json=False, csv=False):
 #    search_list = ['新型冠状病毒', 'AI', '经济学', '管理学']
     search_list = ['新型冠状病毒']
+    test_date = since_date
     # 添加50个热搜入检索词
     if topic:
         addTopic(search_list)
     # 获得爬取结果
-    results_list, results_dict = get_info(search_list)
+    results_list, results_dict = get_info(search_list,test_date)
     # 按需要输出
     if json:
         printJson(results_dict)
@@ -42,7 +44,7 @@ def printJson(results_dict):
 
 
 def printCSV(results_list):
-    headers = ['用户id', '用户名', '微博id','longText']
+    headers = ['用户id', '用户名', '微博id','time','longText']
     with open('query.csv', 'w', newline='') as f:
         f_csv = csv.DictWriter(f, headers)
         f_csv.writeheader()
@@ -55,18 +57,20 @@ def get_baseurl(wd):
 
 
 # 输入检索词得到wbid，用户id及用户名
-def get_info(search_list):
+def get_info(search_list,since_date):
     print('Start Time: ' + str(datetime.now()))
     headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'}
     results_list = []
     results_dict = {}
+    time_list = []
+    since_date = datetime.strptime(since_date, '%Y-%m-%d')
     for wd in search_list:
         wd_list = []
         # 将检索词编码，嵌入url得到不同词的url字典
         base_url = get_baseurl(wd)
         count = 0
         # 获取多页该检索词的结果页面
-        for page in range(1, 2):
+        for page in range(1, 20):
             this_url = base_url + str(page)
             try:
                 r = requests.get(this_url, headers=headers)
@@ -76,12 +80,20 @@ def get_info(search_list):
                 if content.get('ok') == 1:
                     mblogs = jsonpath(content, '$.data.cards..mblog')
                     for mblog in mblogs:
-                        this_dict = {'用户id': mblog['user']['id'], 
-                                     '用户名': mblog['user']['screen_name'], 
-                                     '微博id': mblog['id'],
-                                     'longText':mblog['longText']['longTextContent']}
-                        wd_list.append(this_dict)
-                        count += 1
+                        time_list = []
+                        time_list.append(mblog['created_at'])
+                        l2 = standardize_date(time_list)
+                        mblog['created_at']="\n".join(l2)
+                        created_at = datetime.strptime(
+                                        mblog['created_at'], '%Y-%m-%d')
+                        if (created_at > since_date):
+                            this_dict = {'用户id': mblog['user']['id'], 
+                                         '用户名': mblog['user']['screen_name'], 
+                                         '微博id': mblog['id'],
+                                         'time':mblog['created_at'],
+                                         'longText':mblog['longText']['longTextContent']}
+                            wd_list.append(this_dict)
+                            count += 1
                 if count % 10 == 0:
                     time.sleep(random.randint(2, 8))
             except IndexError:
@@ -101,6 +113,29 @@ def get_info(search_list):
         time.sleep(5)
     return results_list, results_dict
 
+def standardize_date(created_T):
+    """标准化微博发布时间"""
+    stdlist = []
+    for created_at in created_T:
+        if u"刚刚" in created_at:
+            created_at = datetime.now().strftime("%Y-%m-%d")
+        elif u"分钟" in created_at:
+            minute = created_at[:created_at.find(u"分钟")]
+            minute = timedelta(minutes=int(minute))
+            created_at = (datetime.now() - minute).strftime("%Y-%m-%d")
+        elif u"小时" in created_at:
+            hour = created_at[:created_at.find(u"小时")]
+            hour = timedelta(hours=int(hour))
+            created_at = (datetime.now() - hour).strftime("%Y-%m-%d")
+        elif u"昨天" in created_at:
+            day = timedelta(days=1)
+            created_at = (datetime.now() - day).strftime("%Y-%m-%d")
+        elif created_at.count('-') == 1:
+            year = datetime.now().strftime("%Y")
+            created_at = year + "-" + created_at
+        stdlist.append(created_at)
+    return stdlist
 
 if __name__ == '__main__':
-    get_query_wb(json=True, csv=True)
+    te11 = '2020-05-20'
+    get_query_wb(te11,json=True, csv=True)
