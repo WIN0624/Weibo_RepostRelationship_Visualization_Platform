@@ -12,6 +12,7 @@
 
 <br>
 
+---
 ## Logs
 ### MAY 15, 2020
 1. Add memebers responsible for front-end display.
@@ -49,17 +50,17 @@
 ### MAY 21, 2020
 
 1. add longText in `get_query_wb.py`
-2. add `Fans List.html` in `frontEnd`,display fans'names in a list
-3. delete `test.md` from `frontEnd`
+2. add `Fans List.html` in `frontEnd`, display fans'names in a list
+3. Add `Fans_List1.html` in `frontEnd`
+4. delete `test.md` from `frontEnd`
 
 ### MAY 22, 2020
 
-1.  Add crawl time feature  in `get_query_wb.py`
+1. Add crawl time feature  in `get_query_wb.py`
 
-   
+<br><br>
 
-<br><br><br>
-
+---
 
 ## 日志
 ### 2020年5月15日
@@ -100,16 +101,18 @@
 
 ### 2020年5月21日
 
-1. 增加`get_query_wb.py` 爬取微博正文的功能
-2. 上传文件`Fans List`，展示用列表展示粉丝姓名
-3. 删除测试文档`test.md`
+1. 增加 `get_query_wb.py` 爬取微博正文的功能
+2. 上传文件 `Fans_List.html` ，展示用列表展示粉丝姓名
+3. 上传文件 `Fans_List1.html`
+4. 删除测试文档`test.md`
 
-### 2020年5月21日
+### 2020年5月22日
 
 1. 增加`get_query_wb.py` 爬取指定时间段的功能
 
-<br><br><br>
+<br><br>
 
+---
 ## DEVELOPMENT
 
 ### 2020.5.11
@@ -122,3 +125,28 @@
 1. 后端提供的数据库接口
 2. 前端的可视化模型
 3. 对爬取的微博博文进行分析
+
+<br>
+
+### 2020.5.20
+#### 问题:
+1. 使用MINA框架完成不同服务器之间的联系
+2. 后台大批量的数据爬取，如果规避重复爬取和断点续爬？
+3. 数据库和索引库的设计
+4. 前端的网页设计样式，用户操作逻辑框架
+
+#### 近期目标：
+1. **Spider Group**: 
+    + 完善目前基于检索词获取微博正文的代码 
+    + 大规模爬取数据
+    + 研究分布式爬取和后台部署
+    + 为其他组提供需要的数据
+2. **Web Group**:
+    + 前后端调通
+    + 整理好json数据格式
+    + Force Layout图完毕
+    + 制作网站展示页
+3. **DataBase Group**:
+    + 建立设计索引表和数据库，使用 MySql 和 Redis
+    + 前后端调通
+    + 编写脚本导入爬虫爬取到的少量数据
