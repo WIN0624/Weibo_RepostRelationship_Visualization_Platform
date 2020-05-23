@@ -54,4 +54,8 @@
 ## 关于我们
 > 该项目用于构建微博通用搜索和信息分析平台，贡献者主要分为爬虫、前端展示和后端存储。
 
-**Spider Contributor**: Zeng Ying, Zhong Shanshan, Pan Ziyang, Chen Lehua, Huang Zhishan, Yu Yixia.
+**Spider Contributors**: Zeng Ying, Zhong Shanshan, Pan Ziyang, Chen Lehua, Huang Zhishan, Yu Yixia.
+
+**Web Contributors**: Feng Yanxia, Chen Jinying, Peng Jiahui, Gong ZhiLin, Li Yi.
+
+**Sql & Redis Contributors**: Li Jiayi, Han Yuxuan, Kuang Qianyin, Jia Chang, Du Chongwen, Xiao Jingbo, Li Ziqian, Lin Jie, Zeng Linrong.
