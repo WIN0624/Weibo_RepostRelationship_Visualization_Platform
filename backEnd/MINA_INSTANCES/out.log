@@ -1,0 +1,64 @@
+Buildfile: build.xml
+
+init:
+   [delete] Deleting directory /var/tmp/MINA_INSTANCES/classes/main
+   [delete] Deleting directory /var/tmp/MINA_INSTANCES/dest
+    [mkdir] Created dir: /var/tmp/MINA_INSTANCES/classes/main
+    [mkdir] Created dir: /var/tmp/MINA_INSTANCES/dest
+
+compile_main:
+    [javac] Compiling 22 source files to /var/tmp/MINA_INSTANCES/classes/main
+    [javac] This version of java does not support the classic compiler; upgrading to modern
+
+main:
+      [jar] Building jar: /var/tmp/MINA_INSTANCES/dest/medbs.jar
+
+all:
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
+Java HotSpot(TM) 64-Bit Server VM warning: UseCMSCompactAtFullCollection is deprecated and will likely be removed in a future release.
+Java HotSpot(TM) 64-Bit Server VM warning: CMSFullGCsBeforeCompaction is deprecated and will likely be removed in a future release.
+[INFO][10-19 18:42:21 427][18:42:21,427][main][BsConfig.BsConfig] - reload config begin :conf/bs.conf
+ [INFO][10-19 18:42:21 428][18:42:21,428][main][BsConfig.BsConfig] - config:{
+    "abeyanceCycleNumber_debug": -1, 
+    "baseFileName": "vsmed.base.info", 
+    "baseFullDumpPath": "basefull.dump", 
+    "baseInfoDumpPath": "./baseinfo.dump", 
+    "baseInfoFileName": "vsmed.base.info.n", 
+    "dataDir": "./data", 
+    "dictPath": "/home/work/local/wordseg_3.0.16.2/test", 
+    "eventFileNamePrefix": "vsmed.event", 
+    "eventMaxLine": 1000000, 
+    "hospitalLevelNum": 10, 
+    "ideaLevelNum": 10, 
+    "ideanumMaxInUnit": 5, 
+    "lineCharLimit": 100000, 
+    "maxWordIdPerTerm": 10000, 
+    "pairLevelNum": 10, 
+    "planLevelNum": 10, 
+    "port": 8276, 
+    "preWordsegData": "./prewordseg.data", 
+    "qServerHost": "10.182.7.16", 
+    "qServerPort": 8276, 
+    "qserverMaxPair": 500, 
+    "searchMaxWinfoidNumber": 2000, 
+    "searchMaxWordidNumber": 2000, 
+    "selectIdeaFromBegin_debug": true, 
+    "selectIdeaRandomRetrytimes": 3, 
+    "threadNumber": 13, 
+    "topWordCount": 501, 
+    "unitLevelNum": 10, 
+    "updateExecutorSleepMillis": 1000, 
+    "useBidDiscount": true, 
+    "useSearchDisease": true, 
+    "useTagid": false, 
+    "usenlp": false, 
+    "userLevelNum": 10, 
+    "winfoLevelNum": 10, 
+    "wordLevelNum": 10
+}
+
+ [INFO][10-19 18:42:21 441][18:42:21,441][main][BsConfig.BsConfig] - reload config end:conf/bs.conf
+ [INFO][10-19 18:42:21 714][18:42:21,714][main][NetServer.Server] - Server init success.
+ 
