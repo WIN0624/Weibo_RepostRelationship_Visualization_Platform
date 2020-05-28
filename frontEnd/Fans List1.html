@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Fans List</title>
+</head>
+<style>
+    *{margin:0;padding:0px;font-size:12px;}
+    ul {list-style:none;}
+    #box {
+        width: 600px;
+        height: 800px;
+        margin:20px auto;
+    }
+
+    #con {
+        margin-top: 20px;
+    }
+
+        #con li {
+            line-height: 30px;
+            text-align: center;
+        }
+</style>
+<!--引入 本地data.json-->
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $.ajax({
+            type: 'get',
+            url: 'data.json',//请求数据的地址
+            dataType: "json",        //返回数据形式为json
+            success: function (result) {
+                //请求成功时执行该函数内容，result即为服务器返回的json对象
+
+                con = "";
+                $.each(result, function (index, item) {
+                    //挨个取出类别并填入类别数组
+                    //var name = result[index].name;
+                    con += "<li>" + item.name + "</li>";
+                });
+                console.log(con);
+                $("#con").html(con);
+            }
+
+        })
+
+    })
+
+</script>
+<body>
+    <div id="box" style="width:600px; height: 800px;">
+        <h2 style="text-align:center;">Fans List</h2>
+        <ul id="con"></ul>
+    </div>
+</body>
+</html>

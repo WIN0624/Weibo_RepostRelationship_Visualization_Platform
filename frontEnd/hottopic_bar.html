@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Bar Charts</title>
+    <!-- 引入 echarts.js -->
+    <script src="echarts.min.js"></script>
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+</head>
+
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="demo" style="width: 1500px;height:800px;"></div>
+    <script type="text/javascript">
+        var dom = document.getElementById('demo');
+        var chart = echarts.init(dom);
+
+        var option = {
+            title: {
+                text: '微博热搜'
+            },
+            tooltip: {},
+            /*
+            legend: {
+                data: ['中药', '疾病']
+            },
+            */
+            xAxis: {
+                data: []
+            },
+            yAxis: [
+                {}
+            ],
+            series: [
+                {
+                    type: 'bar',
+                    data: []
+                }
+            ]
+        };
+
+        chart.setOption(option);
+
+        $.get('https://gist.githubusercontent.com/Linya-gzl/04970eebdce020cf79c1ecb7b0536fd0/raw/f768ba9f3848bdd305a4c198d9a2382cd97d1a78/weibohot.json').done(function (data) {
+            dataArr = JSON.parse(data);//parse json string into js object
+            console.log(dataArr);
+            chart.setOption({
+                grid:{
+                    left: '10%',
+                    bottom:'35%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: dataArr.map(row => row['topic']),
+                    axisLabel:{
+                        interval: 0,    //坐标轴刻度标签的显示间隔，0意味着显示所有标签
+                        //rotate:10,    //标签倾斜角度，防止标签显示不全
+                        formatter: function(value){
+                            return value.split("").join("\n");
+                        },
+                    }
+                },
+                series: [{
+                    //name: '热度值',
+                    data: dataArr.map(row => row['score'])
+                }
+            ]
+            });
+            
+        });
+            
+           
+    </script>
+</body>
+</html>

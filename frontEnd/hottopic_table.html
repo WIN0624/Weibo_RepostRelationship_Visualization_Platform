@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+</head>
+<body>
+<table id="table" border="1" cellspacing="0" cellpadding="0" >
+   <tr>
+        <th>topic</th>
+        <th>score</th>
+    </tr>
+</table>
+
+<script>
+    window.onload=function(){
+    var dom = document.getElementById('table');
+    $.get('https://gist.githubusercontent.com/Linya-gzl/04970eebdce020cf79c1ecb7b0536fd0/raw/f768ba9f3848bdd305a4c198d9a2382cd97d1a78/weibohot.json').done(function (data) {
+            dataArr = JSON.parse(data);//parse json string into js object
+            console.log(dataArr);
+            for(var i=0; i<dataArr.length;i++){
+                    var row=dom.insertRow(dom.rows.length)
+                    var c1=row.insertCell(0);
+                    c1.innerHTML=dataArr[i].topic;
+                    var c2=row.insertCell(1);
+                    c2.innerHTML=dataArr[i].score;
+                }
+            
+        });
+    }
+
+</script>
+</body>
+</html>
