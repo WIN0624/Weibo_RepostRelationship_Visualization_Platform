@@ -39,4 +39,16 @@ public class WeiboController {
         log.info("成功连接服务器，获取检索结果："+qrep.getJsonInfo());
         return qrep.getJsonInfo();
     }
+
+    @RequestMapping(value = "/getRelationshipBody/{weiboId}",method = RequestMethod.GET)
+    public String relationshipBody(@PathVariable("weiboId")String weiboId){
+        log.info("收到relationshipBody请求："+weiboId);
+        Client clt = new Client();
+        Request_query qrst = new Request_query();
+        qrst.set_query_type("rpBody");
+        qrst.set_query(weiboId);
+        rank_response_vs qrep=clt.process(qrst);
+        log.info("成功连接服务器，获取检索结果："+qrep.getJsonInfo());
+        return qrep.getJsonInfo();
+    }
 }
