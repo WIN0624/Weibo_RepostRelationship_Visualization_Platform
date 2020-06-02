@@ -1,0 +1,13 @@
+file_size:0
+user_num:1
+hospital_num:1
+plan_num:1
+unit_num:1
+keyword_num:1
+idea_num:1
+reject_num:0
+query_num:0
+split_char:'	'
+eventid:1
+idx:0
+line:2
