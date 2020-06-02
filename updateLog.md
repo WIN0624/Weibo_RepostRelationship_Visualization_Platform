@@ -58,6 +58,11 @@
 
 1. Add crawl time feature  in `get_query_wb.py`
 
+### June 2nd, 2020
+
+1. Add `getTopic` and `getText` functions to `get_query_wb.py`.
+2. Reconstruct crawl time funtion in `get_query_wb.py`.
+
 <br><br>
 
 ---
@@ -109,6 +114,11 @@
 ### 2020年5月22日
 
 1. 增加`get_query_wb.py` 爬取指定时间段的功能
+
+### 2020年6月2日
+
+1. 在`get_query_wb.py`增加获取微博正文及正文中话题的方法。
+2. 重构`get_query_wb.py`中关于获取指定时间段内微博的代码。
 
 <br><br>
 
