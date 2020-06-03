@@ -1,8 +1,6 @@
 package QDataType;
 
 import org.json.JSONObject;
-import com.baidu.gson.annotations.Expose;
-import com.baidu.gson.annotations.SerializedName;
 
 /**
  * @author lijy3
@@ -13,6 +11,9 @@ import com.baidu.gson.annotations.SerializedName;
  */
 
 public class Relationship {
+    //user_id,screen_name,bw_id,origin,reposts_count,
+    // fs_user_id,fs_screen_name,fs_bw_id,fans_count,
+    // fs_fans_count,level,raw_text,created_at
     private String user_id;
     private String screen_name;
     private String bw_id;
@@ -21,7 +22,43 @@ public class Relationship {
     private String fs_user_id;
     private String fs_screen_name;
     private String fs_bw_id;
+    private String fans_count;
+    private String fs_fans_count;
     private String level;
+    private String raw_text;
+    private String created_at;
+
+    public String getFans_count() {
+        return fans_count;
+    }
+
+    public void setFans_count(String fans_count) {
+        this.fans_count = fans_count;
+    }
+
+    public String getFs_fans_count() {
+        return fs_fans_count;
+    }
+
+    public void setFs_fans_count(String fs_fans_count) {
+        this.fs_fans_count = fs_fans_count;
+    }
+
+    public String getRaw_text() {
+        return raw_text;
+    }
+
+    public void setRaw_text(String raw_text) {
+        this.raw_text = raw_text;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
 
     public String getUser_id() {
         return user_id;
@@ -106,7 +143,11 @@ public class Relationship {
                 ", fs_user_id='" + fs_user_id + '\'' +
                 ", fs_screen_name='" + fs_screen_name + '\'' +
                 ", fs_bw_id='" + fs_bw_id + '\'' +
+                ", fans_count='" + fans_count + '\'' +
+                ", fs_fans_count='" + fs_fans_count + '\'' +
                 ", level='" + level + '\'' +
+                ", raw_text='" + raw_text + '\'' +
+                ", created_at='" + created_at + '\'' +
                 '}';
     }
 
@@ -120,7 +161,11 @@ public class Relationship {
                 ','+'\"'+"fs_user_id"+'\"'+"=" +'\"'+fs_user_id+'\"'+
                 ','+'\"'+"fs_screen_name"+'\"'+"=" +'\"'+fs_screen_name+'\"'+
                 ','+'\"'+"fs_bw_id"+'\"'+"=" +'\"'+fs_bw_id+'\"'+
+                ','+ '\"'+"fans_count"+'\"'+"="+'\"'+ fans_count + '\"' +
+                ','+ '\"'+"fs_fans_count"+'\"'+"="+'\"'+fs_fans_count + '\"' +
                 ','+'\"'+"level"+'\"'+"=" +'\"'+level+'\"'+
+                ','+ '\"'+"raw_text"+'\"'+"="+'\"'+raw_text + '\"' +
+                ','+ '\"'+"created_at"+'\"'+"="+'\"'+created_at + '\"' +
                 '}';
     }
 
@@ -134,7 +179,11 @@ public class Relationship {
         jsonObject.put("fs_user_id",fs_bw_id);
         jsonObject.put("fs_screen_name",fs_screen_name);
         jsonObject.put("fs_bw_id",fs_bw_id);
+        jsonObject.put("fans_count",fans_count);
+        jsonObject.put("fs_fans_count",fs_fans_count);
         jsonObject.put("level",level);
+        jsonObject.put("raw_text",raw_text);
+        jsonObject.put("created_at",created_at);
         return  jsonObject;
     }
 }
