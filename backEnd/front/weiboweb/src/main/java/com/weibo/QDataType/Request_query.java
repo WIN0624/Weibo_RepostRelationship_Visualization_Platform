@@ -3,11 +3,12 @@ package com.weibo.QDataType;
 import java.util.List;
 import com.baidu.gson.annotations.Expose;
 import com.baidu.gson.annotations.SerializedName;
+import org.springframework.stereotype.Component;
 
 /**
  * 121发送给192的微博内容请求
  */
-
+@Component
 public class Request_query {
 
     @Expose

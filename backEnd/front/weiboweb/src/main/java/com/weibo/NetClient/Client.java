@@ -16,8 +16,9 @@ import com.weibo.BsConfig.BsConfig;
 
 import com.weibo.QDataType.rank_response_vs;
 import com.weibo.SearchConfig.SearchConfig;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class Client {
 
     private final static Logger logger = Logger.getLogger(Client.class);
