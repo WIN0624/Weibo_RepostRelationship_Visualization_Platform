@@ -52,7 +52,7 @@ def printCSV(results_list):
 
 
 def get_baseurl(wd):
-    base_url = 'http://m.weibo.cn/container/getIndex?containerid=100103type%3D1%26q%3D' + quote(wd) + "&page_type=searchall&page="
+    base_url = 'https://m.weibo.cn/api/container/getIndex?containerid=100103type%3D1%26q%3D' + quote(wd) + "&page_type=searchall&page="
     return base_url
 
 
@@ -66,7 +66,7 @@ def getTopic(text):
 
 def getText(mblog):
     if mblog['isLongText']:
-        text = mblog['longText']['longTextContent']
+        text = mblog['longText']['longTextContent'] 
     else:
         soup = BeautifulSoup(mblog['text'], 'html.parser')
         text = ''
@@ -82,13 +82,15 @@ def get_info(search_list, since_date=None):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'}
     results_list = []
     results_dict = {}
+    if_crawl = True
     for wd in search_list:
         wd_list = []
         # 将检索词编码，嵌入url得到不同词的url字典
         base_url = get_baseurl(wd)
         count = 0
         # 获取多页该检索词的结果页面
-        for page in range(1, 50):
+        for page in range(1, 250):
+            print('This is page ' + str(page))
             this_url = base_url + str(page)
             try:
                 # proxypool_url = 'http://127.0.0.1:5555/random'
@@ -115,9 +117,10 @@ def get_info(search_list, since_date=None):
                             since_date = datetime.strptime(since_date, '%Y-%m-%d')
                             created_at = datetime.strptime(mblog['created_at'], '%Y-%m-%d')
                             if (created_at > since_date):
-                                wd_list.append(this_dict)
-                                count += 1
+                                if_crawl = False
                         else:
+                            if_crawl = False
+                        if not if_crawl:
                             wd_list.append(this_dict)
                             count += 1
                 if count % 10 == 0:
@@ -162,6 +165,6 @@ def standardize_date(created_at):
     return created_at
 
 
-# if __name__ == '__main__':
-#    te11 = '2020-05-31'
-#    get_query_wb(json=True, csv=True)
+if __name__ == '__main__':
+    te11 = '2020-05-31'
+    get_query_wb(json=True, csv=True)
