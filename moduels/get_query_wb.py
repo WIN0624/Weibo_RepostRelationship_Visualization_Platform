@@ -18,8 +18,9 @@ from urllib.parse import quote
 
 
 # 相当于主函数
-def get_query_wb(topic=False, json=False, csv=False, since_date=None):
-    search_list = ['新型冠状病毒']
+def get_query_wb(entity_list, topic=False, json=False, csv=False, since_date=None):
+#    search_list = ['新型冠状病毒']
+    search_list = entity_list
     # 添加50个热搜入检索词
     if topic:
         addTopic(search_list)
@@ -82,18 +83,24 @@ def get_info(search_list, since_date=None):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'}
     results_list = []
     results_dict = {}
+    since_date = datetime.strptime(since_date, '%Y-%m-%d')
     for wd in search_list:
         wd_list = []
         # 将检索词编码，嵌入url得到不同词的url字典
         base_url = get_baseurl(wd)
         count = 0
         # 获取多页该检索词的结果页面
-        for page in range(1, 50):
-            this_url = base_url + str(page)
+        page = 0
+        flag = True
+        while flag:
             try:
-                # proxypool_url = 'http://127.0.0.1:5555/random'
-                # proxies = {'http': 'http://' + requests.get(proxypool_url).text.strip()}
-                r = requests.get(this_url, headers=headers)
+                page = page + 1
+                this_url = base_url + str(page)
+                proxypool_url = 'http://127.0.0.1:5555/random'
+                print('正在处理-->',this_url)
+                proxies = {'http': 'http://' + requests.get(proxypool_url).text.strip()}
+                r = requests.get(this_url, headers=headers,proxies = proxies)
+#                r = requests.get(this_url, headers=headers)
                 r.raise_for_status()
                 r.encoding = r.apparent_encoding
                 content = json.loads(r.text)
@@ -112,7 +119,6 @@ def get_info(search_list, since_date=None):
                                     '发表时间': mblog['created_at']
                                 }
                         if since_date:
-                            since_date = datetime.strptime(since_date, '%Y-%m-%d')
                             created_at = datetime.strptime(mblog['created_at'], '%Y-%m-%d')
                             if (created_at > since_date):
                                 wd_list.append(this_dict)
@@ -124,7 +130,7 @@ def get_info(search_list, since_date=None):
                     time.sleep(random.randint(2, 8))
             except IndexError:
                 print('There is no more data for this word! To the next word!')
-                break
+                flag = False
             except requests.HTTPError:
                 print('I have met the HTTPError! I got to stop 3 minutes!')
                 time.sleep(180)
@@ -162,6 +168,6 @@ def standardize_date(created_at):
     return created_at
 
 
-# if __name__ == '__main__':
-#    te11 = '2020-05-31'
-#    get_query_wb(json=True, csv=True)
+#if __name__ == '__main__':
+#    te11 = '2020-06-05'
+#    get_query_wb(entity_list = ['新型冠状病毒'],since_date = te11,json=True, csv=True)
