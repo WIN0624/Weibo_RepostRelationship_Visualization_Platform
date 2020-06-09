@@ -1,4 +1,4 @@
-# WeiboSpider
+# Weibo_RepostRelationship_Visualization_Platform
 **@authors: members of the 2018 class scientific research team from School of Information Management of SYSU，lead by Prof. Li.**
 
 <br>
