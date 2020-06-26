@@ -3,3 +3,4 @@ fake-useragent==0.1.11
 lxml==4.5.0
 requests==2.23.0
 jsonpath==0.82
+retry==0.9.2
