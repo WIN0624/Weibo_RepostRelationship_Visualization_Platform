@@ -239,3 +239,373 @@ public class rank_response_vs {
 在mina通讯过程中，数据结点充当server，触发充当client。
 
 contoller类接收前端传过来的请求后，通过mina框架的client将请求传送给数据节点的server；server检索成功后，通过mina框架将结果返回给web层mina框架的client，最后contoller将接收到的结果返回给前端。
+
+## 项目代码详细说明
+
+### NetClient部分说明
+
+#### NetClient功能说明
+
+#### Client.java说明
+
+##### Client.java功能描述
+
+>Client.java部分的代码用于
+Client.java将WeiboController接收到的Request_query对象qRequest，并转换为rank_response_vs实例，将其通过mina传给server，再接受server的回传。对编码过滤器和会话设置进行初始配置。
+
+##### Client.java代码说明
+
+```java
+public class Client {
+
+    //静态方法创建日志实例
+    private final static Logger logger = Logger.getLogger(Client.class);
+
+    //private static int PORT = 3600;//3600;
+    //private static String HOST = "10.48.145.21:10.48.145.21";//"10.46.167.36";
+
+    private static Random random = new Random();
+
+    NioSocketConnector connector;
+
+    ConnectFuture cf;
+
+    public Client() {
+    }
+
+    //此方法用于将参数接收的Request_query类型实例qRequest转换为rank_response_vs类型实例
+    public rank_response_vs process(Request_query qRequest) {
+        //此处省略部分初始化操作
+        while((!haveConnect)&&(retryNum!=0)){
+            try{
+                init();
+
+                // 此处修改server的ip
+                String connectHost = "192.168.1.116";
+                //hostList[(randomNumber+retryNum)%hostNumber];
+
+                logger.info("Try to connect. retryNum=" + retryNum + ",connectHost=" + connectHost);
+                int PORT = 8770;
+                //int PORT = 8276;//Integer.parseInt(BsConfig.Q_SERVER_PORT);
+                //获取一个连接对象cf
+                cf = connector.connect(new InetSocketAddress(connectHost, PORT));
+                System.out.println("First Step!");
+                //等待异步执行的结果返回
+                cf.awaitUninterruptibly();
+                System.out.println("Second Step!");
+                //在会话中写入qRequest
+                cf.getSession().write(qRequest);
+                System.out.println("Third Step!");
+                //让当前线程同步等待Client的close事件，即连接断开
+                cf.getSession().getCloseFuture().awaitUninterruptibly();
+                System.out.println("Finish Connecting the server!");
+                //server传给client最后会放到这里，调试的时候可以设为断点查看
+                qResponse = (rank_response_vs) cf.getSession().getAttribute("res");
+                //qResponse = (rank_response_vs) cf.getSession().read().getMessage();
+                haveConnect = true;
+            }catch(Exception e1){
+                e1.printStackTrace();
+                haveConnect = false;
+                logger.error("ConnectException");
+                System.out.println("ERROR Happen!");
+            }
+            //不关闭的话会运行一段时间后抛出，too many open files异常，导致无法连接
+            connector.dispose();
+            logger.info("connector.dispose()");
+            retryNum--;
+        }
+
+        return qResponse;
+    }
+
+    //对编码过滤器、Socket会话进行配置
+    private void init(){
+        connector = new NioSocketConnector();
+        logger.info("ready to connect. new NioSocketConnector");
+        //设置编码过滤器
+        connector.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new ClientCodecFactory()));
+        //ExecutorFilter保证在处理handler的时候是独立线程,session.wirte变成并行处理;
+        //connector.getFilterChain().addLast( "threadPool", new ExecutorFilter(Executors.newCachedThreadPool()));
+        SocketSessionConfig config = (SocketSessionConfig) connector.getSessionConfig();
+        //此处省略部分会话配置和编码过滤器配置
+    }
+
+    //用户通信模拟的方法，方法体省略
+    public Request_query process_exp()
+}
+```
+
+#### ClientCodecFactory.java说明
+
+##### ClientCodecFactory.java功能描述
+
+>ClientCodecFactory.java用于
+Mina通信中编解码器的申明和注册
+
+##### ClientCodecFactory.java代码说明
+
+```java
+
+public class ClientCodecFactory extends DemuxingProtocolCodecFactory {
+    //创建解码器
+    private MessageDecoder decoder = new ClientDecoder();
+
+    //创建编码器
+    private MessageEncoder<Request_query> encoder = new ClientEncoder();
+
+    //注册编码器和解码器
+    public ClientCodecFactory() {
+
+        addMessageDecoder(decoder);
+        addMessageEncoder(Request_query.class, encoder);
+    }
+}
+```
+
+#### ClientEncoder.java说明
+
+##### ClientEncoder.java功能描述
+
+>ClientEncoder.java用于
+实现编码过程，按照协议拼装传输内容到IoBuffer 缓冲区，然后调用ProtocolEncoderOutput 的write()方法输出字节流。
+
+##### 编码器编写步骤
+
+>ClientEncoder编写步骤包括
+
+1. 将 encode()方法中的message对象转换为指定的对象类型；
+
+2. 创建IoBuffer缓冲区对象，并设置为自动扩展；
+
+3. 将需要传输的对象（此代码中为nshead）各个部分按照指定的应用层协议进行组装，并put()到IoBuffer 缓冲区；
+
+4. 组装数据完毕之后，调用flip()方法，为输出做好准备，切记在write()方法之前，要调用IoBuffer 的flip()方法，否则缓冲区的position 的后面是没有数据可以用来输出的，你必须调用flip()方法将position 移至0，limit 移至刚才的position。
+
+5. 最后调用ProtocolEncoderOutput的write()方法输出IoBuffer缓冲区实例。
+
+##### ClientEncoder.java代码说明
+
+```java
+
+public class ClientEncoder implements MessageEncoder<Request_query> {
+    //静态方法创建日志实例
+    private final static Logger logger = Logger.getLogger(ClientEncoder.class);
+
+    private final static byte[] PROVIDER = new byte[] { 'B', 'a', 'i', 'd', 'u', '-', 'V', 'S', '-', 'D', 'A', 0, 0, 0, 0, 0 };
+
+    private final static Gson gson = new GsonBuilder().disableHtmlEscaping().serializeSpecialFloatingPointValues().create();
+
+    public final static Gson inner_gson = new GsonBuilder().disableHtmlEscaping().serializeSpecialFloatingPointValues().create();
+
+    private final static Mcpack mcpack = new Mcpack();
+
+    //实现encode方法
+    @Override
+    public void encode(IoSession session, Request_query message, ProtocolEncoderOutput out) throws Exception {
+        long start = System.nanoTime();
+        try {
+            //String client = session.getRemoteAddress().toString();
+
+            String query = message.get_query();
+            //String query = message.get_query();
+
+            //创建IoBuffer缓冲区对象，并设置为自动扩展
+            IoBuffer buf = IoBuffer.allocate(100).setAutoExpand(true);
+
+            //创建nshead
+            Nshead nshead = new Nshead();
+
+            /*
+             * 控制部分打包
+            */
+            /*
+             * 数据部分打包
+             */
+            JsonElement realJson = gson.toJsonElement(message);
+            byte[] realDataBinary = mcpack.toMcpack(SearchConfig.Q_SERVER_COMPACK_CHARSET, realJson);
+
+            /*
+             * 控制部分与数据部分放一起
+             */
+            nshead.body_len = realDataBinary.length;
+            byte[] data = new byte[nshead.body_len];
+            System.arraycopy(realDataBinary,0,data,0,realDataBinary.length);
+
+            nshead.provider = PROVIDER;
+
+            // 组装nshead，将nshead对象中的各个部分按照指定的应用层协议进行组装，并put()到IoBuffer 缓冲区；
+            buf.putUnsignedShort(Util.convertEndian(nshead.id));
+            buf.putUnsignedShort(Util.convertEndian(nshead.version));
+            //···此处省略nshead的部分组装代码
+
+            buf.put(data);
+
+            /*
+            *调用flip()方法，为输出做好准备
+            * 切记在write()方法之前，要调用IoBuffer 的flip()方法，否则缓冲区的position 的后面是没有数据可以用来输出的
+            * 调用flip()方法将position移至0，limit移至刚才的position。
+             */
+            buf.flip();
+
+            if (logger.isDebugEnabled()) {
+                logger.debug(query + "-pack time: " + (System.nanoTime() - start) + " ns");
+            }
+            logger.info("sendToQS. Encoder time ="+(System.nanoTime() - start));
+            //调用ProtocolEncoderOutput 的write()方法输出IoBuffer 缓冲区实例
+            out.write(buf);
+            } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+
+#### ClientDecoder.java说明
+
+##### ClientDecoder.java功能描述
+
+>ClientDecoder.java
+实现解码过程，可以实现ProtocolDecoder 接口，其中有decode()、finishDecode()、dispose()三个方法，其中，主要关注decode()方法即可。
+
+##### ClientDecoder.java代码说明
+
+```java
+
+public class ClientDecoder implements MessageDecoder {
+    //静态方法创建日志实例
+    private final static Logger logger = Logger.getLogger(ClientDecoder.class);
+
+    private final static Gson gson = new GsonBuilder().disableHtmlEscaping().serializeSpecialFloatingPointValues().create();
+
+    private final static Mcpack mcpack = new Mcpack();
+
+    //实现decodable方法，判断IoBuffer是否可解码
+    @Override
+    public MessageDecoderResult decodable(IoSession paramIoSession, IoBuffer in) {
+        if (in.remaining() < Nshead.HEAD_LENGTH) {
+        return MessageDecoderResult.NEED_DATA;
+    }
+
+        Nshead nshead = decodeNsHead(in);
+
+        if (in.remaining() < nshead.body_len) {
+        return MessageDecoderResult.NEED_DATA;
+        }
+
+        return MessageDecoderResult.OK;
+    }
+
+    //该方法对nshead进行解码
+    public static Nshead decodeNsHead(IoBuffer in) {
+        Nshead nshead = new Nshead();
+        System.out.println("I am here for NSHEAD!!!");
+
+
+        //获取id
+        byte[] bytes = new byte[2];
+        in.get(bytes);
+        nshead.id = Util.makeShort(bytes[1], bytes[0]);
+
+        //获取body_len
+        in.get(bytes);
+        nshead.body_len = Util.makeInt(bytes[3], bytes[2], bytes[1], bytes[0]);
+
+        //···此处省略获取nshead的部分内容
+
+        System.out.println("Finish Getting NSHEAD!");
+
+        return nshead;
+    }
+
+    //实现decode方法，进行解码
+    @Override
+    public MessageDecoderResult decode(IoSession paramIoSession, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
+        System.out.println("ReceiveFromQS");
+        logger.info("receiveFromQS.");
+        long start = System.nanoTime();
+
+        String client = paramIoSession.getRemoteAddress().toString();
+
+        //调用decodeNsHead方法进行解码，获取解码后的nshead
+        Nshead nshead = decodeNsHead(in);
+
+        System.out.println("After decodeNsHead!");
+        //body转换为字节数组allData
+        byte[] allData = new byte[nshead.body_len];
+        in.get(allData);
+
+        System.out.println("After getting allData");
+        //由字节数组allData转换为json对象realDataJson
+        JsonElement realDataJson = mcpack.toJsonElement(SearchConfig.Q_SERVER_COMPACK_CHARSET, allData);
+        //实现从json相关对象realDataJson到java实体对象qResponse
+        rank_response_vs qResponse = gson.fromJson(realDataJson, rank_response_vs.class);
+        System.out.println("hahaha! "+qResponse.toString());
+        System.out.println("lalala! "+qResponse.getJsonInfo());
+        if (logger.isDebugEnabled() || logger.isTraceEnabled()) {
+            //logger.debug(" " + client + " body: " + gson.toJson(qResponse));
+            logger.debug(" " + client + " unpack time: " + (System.nanoTime() - start) + " ns");
+        }
+        logger.info("Decoder time="+(System.nanoTime() - start));
+        //以字符串形式输出
+        out.write(qResponse);
+
+        return MessageDecoderResult.OK;
+    }
+
+    //finishDecode方法一般不会被用到，只要继承适配器ProtocolDecoderAdapter即可
+}
+```
+
+#### ClientHandler.java说明
+
+##### ClientHandler.java功能描述
+
+>ClientHandler.java
+ClientHandler类用于进行逻辑处理，类中的方法在通信中发生相应事件时触发，暂未使用
+
+##### ClientHandler.java代码说明
+
+```java
+
+//ClientHandler类用于进行逻辑处理，暂未使用
+
+public class ClientHandler implements IoHandler {
+
+    private final static Logger logger = Logger.getLogger(ClientHandler.class);
+
+    //捕捉到异常时的处理方法，关闭连接，日志记录异常信息
+    @Override
+    public void exceptionCaught(IoSession session, Throwable cause)
+            throws Exception {
+        session.close(true);
+        logger.error(cause.getMessage(), cause);
+    }
+
+    //接受消息时的处理方法
+    @Override
+    public void messageReceived(IoSession session, Object message) throws Exception {
+
+        try {
+            //判断类型
+            if (message instanceof rank_response_vs) {
+                rank_response_vs resp = (rank_response_vs) message;
+                System.out.println(resp.toString());
+            //设置会话属性
+                session.setAttribute("res", resp);
+                logger.debug("messageSent=+resp.toString()");
+            }
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+            rank_response_vs resp = new rank_response_vs();
+            resp.setStatus(ResponseCode.INTERNAL_ERROR);
+        }
+        //消息完全接收后关闭会话
+        session.close(true);
+    }
+
+    //其余逻辑处理方法暂不做实现
+
+}
+
+```
