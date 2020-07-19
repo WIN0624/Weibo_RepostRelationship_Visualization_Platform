@@ -1,14 +1,14 @@
 # Update Details.
 > **What does the Update Log do?**
 > <br><br>
-> This is a document for our development, which contains the updates for Modeuls and Fornt-End development.
+> This is a document for our procession when developing, which contains the updates for Modeuls and Fornt-End development.
 
 <br>
 
 ## CONTENT
-1. [Logs-EN](##Logs)
+1. [Logs-EN](##logs)
 2. [Logs-ZH](##日志)
-3. [Development](##DEVELOPMENT)
+3. [Development](##development)
 
 <br>
 
@@ -62,6 +62,17 @@
 
 1. Add `getTopic` and `getText` functions to `get_query_wb.py`.
 2. Reconstruct crawl time funtion in `get_query_wb.py`.
+
+### July 18, 2020
+1. We have a test for Front-End connection debugging, and will have another one three days later.
+2. Front Group will be responsible for `VUE` website, which may be completed in a week later.
+3. The Introduction Document will soon updated by all members.
+4. We're back to continue to maintenance the project.
+
+### July 19, 2020
+
+1. Update `Spider` directory to overwirte the original *SPIDER* `moduel`.
+2. Some Documents updated.
 
 <br><br>
 
