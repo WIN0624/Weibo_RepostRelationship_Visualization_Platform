@@ -38,7 +38,7 @@ def getText(mblog):
 
 # 获取返回微博总页数
 @retry(stop_max_attempt_number=5, wait_fixed=3000)
-def getPage(wd, base_url, logger):
+def get_Page(wd, base_url, logger):
     r = requests.get(base_url, headers=get_header(), proxies=get_proxy())
     r.raise_for_status()
     page = json.loads(r.text)['data']['cardlistInfo']['total']/10 + 1
@@ -55,7 +55,7 @@ def get_query_info(wd, writer, logger, since_date=None):
     # 爬取检索页面下热门栏的页面
     base_url = 'https://m.weibo.cn/api/container/getIndex?containerid=100103type%3D60%26q%3D' + quote(wd) + '%26t%3D0&page_type=searchall'
     # 计算可获取的总页数
-    page = getPage(wd, base_url, logger)
+    page = get_Page(wd, base_url, logger)
     # 获取包含检索词的相关微博
     while (page_count <= page):
         result_list = []
