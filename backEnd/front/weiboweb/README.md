@@ -669,3 +669,42 @@ public class ClientHandler implements IoHandler {
 }
 
 ```
+
+
+
+
+
+### MyRedis部分说明
+
+MyRedis用于实现对Redis的操作。ReadDateFromRedis实现了根据检索词获取前十条微博的id。
+
+#### ReadDateFromRedis.java
+
+##### 功能描述
+
+实现对Redis的操作方法。实现了`getIDFromRedis`根据检索词获取前十条微博的id。
+
+##### 代码说明
+
+使用Jedis连接到redis，设置redis的地址、端口以及密码，使用zrange方法获取到有序集合里面前十条结果，并存入到ArrayList<String>中，返回ArrayList。
+
+```java
+public class ReadDataFromRedis {
+    /**
+     * 根据query查取微博ID
+     * @param query
+     * @return wb_id
+     */
+    public static ArrayList<String> getIDFromRedis(String query){
+        Jedis jedis = new Jedis("192.168.1.108",6479);//设置地址以及端口号
+        jedis.auth("nopassword");//输入密码
+        ArrayList<String> wb_id = new ArrayList<String>();
+        wb_id.addAll(jedis.zrange(query,0,9));//获取前十条微博id
+        // keys.addAll(jedis.zrevrange(query,0,-1));
+
+        jedis.close();
+        return wb_id;
+    }
+}
+```
+
