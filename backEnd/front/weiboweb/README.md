@@ -242,6 +242,66 @@ contoller类接收前端传过来的请求后，通过mina框架的client将请�
 
 ## 项目代码详细说明
 
+### BsConfig部分说明
+
+BsConfig用于处理配置文件，分为BsConfig和FileHelper两个类，FileHelper用于直接读取及修改配置文件，BsConfig用于处理配置文件中的数据供其它类调用。
+
+#### FileHelper.java
+
+`FileHelper`类实现了`readFileContent`读取文件内容、`writeFileContent`将内容写入文件和`exists`判断文件是否存在三个功能。read与write通过方法重载实现了对传入String类和File类的支持，二者通过文件输入输出流套接`BufferredReader`/`BufferredWriter`实现文件读写；`exists`方法则直接通过File类的`exists`方法实现。
+
+代码结构：
+
+```java
+public static String readFileContent(String fileName)
+//直接用String类的文件名新建File类的对象实例并调用重载方法
+public static String readFileContent(File file)
+//使用套接有输入流的BufferredReader读取配置文件内容
+public static void writeFileContent(String fileName, String content)
+//将content添加到名为filename的文件中，仍是新建File类的对象实例，调用重载方法
+public static void writeFileContent(File file, String content)
+//使用套接有输出流的BufferredWriter输出内容
+public static boolean exists(String file)
+//直接使用File类的exists方法判断文件是否存在
+```
+
+
+
+#### BsConfig.java
+
+`BsConfig`类使用`load`方法（实质上是调用了`reload`方法）加载配置文件并读入一个`HashMap`类的实例中，其中加载的具体实现是：先使用`FileHelper`类读取json格式的配置文件，然后使用第三方Gson包将json数据转换成HashMap类的实例。而后再使用多个不同类型的`get`方法从HashMap实例中取出数据以供其它类使用。另外，该类中创建了一个`ReloadThread`子线程用于每隔一秒判断一次配置文件是否有修改并读入修改过的配置文件。
+
+代码主要结构：
+
+```java
+protected static Gson gson = new Gson();
+//新建Gson实例用于从配置文件中读取json数据
+static HashMap<String, String> data;
+//新建HashMap实例用于存放json数据
+static long lastModified = 0;
+//新建长整数存放配置文件最后一次被修改的时间，用于判断是否需要重新加载
+public static void load(String conf)
+//调用重载方法并添加参数true
+public static void load(String conf, boolean check)
+//为避免代码重复，此处直接调用reload方法读取配置文件
+public static void reload()
+//判断lastModified是否更新过，若更新过则通过FileHelper重新读入配置文件
+static class ReloadThread extends Thread
+//新建ReloadThread子线程，每隔一秒运行一次外部类的reload方法
+public static String get(String key)
+//从配置文件中获取一个字符串数据，即从HashMap的实例data中读取一个值
+public static int getInt(String key)
+//从配置文件中获取一个整型数据，实质上是读取一个字符串后将其转化为整型
+public static boolean getBool(String key)
+//从配置文件中获取一个布尔型数据，实质上是读取一个字符串后将其转化为布尔型
+public static long getLong(String key)
+//从配置文件中获取一个长整型数据，实质上是读取一个字符串后将其转化为长整型
+public static float getFloat(String key)
+//从配置文件中获取一个单精度浮点型数据，实质上是读取一个字符串后将其转化为单精度浮点型
+```
+
+
+
 ### NetClient部分说明
 
 #### NetClient功能说明
