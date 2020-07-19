@@ -6,7 +6,7 @@ from utils.loadConfig import load_config
 
 def split_searchList(raw_searchlist):
     # 为进程池预处理
-    # searchlist：共十个元素，每个元素为数组，数组中为检索词
+    # searchlist：共分为5组对应5个进程，每个元素为数组，数组中为检索词
     searchlist = []
     temp = []
     count = 1
