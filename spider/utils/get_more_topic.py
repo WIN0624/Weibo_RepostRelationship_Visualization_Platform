@@ -33,7 +33,7 @@ def get_more_topic(query, epoch, topic_dir, logger):
                 items = jsonpath(content, '$..card_group..title_sub')
                 for item in items:
                     temp = item.strip('#')
-                    if temp is not query:
+                    if temp != query.strip():
                         topic_list.append([temp])
             else:
                 continue
