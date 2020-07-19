@@ -6,14 +6,14 @@
 <br>
 
 ## CONTENT
-1. [Logs-EN](##logs)
-2. [Logs-ZH](##日志)
-3. [Development](##development)
+1. [Logs-EN](#logs)
+2. [Logs-ZH](#rizhi)
+3. [Development](#development)
 
 <br>
 
 ---
-## Logs
+## <span id="logs">Logs</span>
 ### MAY 15, 2020
 1. Add memebers responsible for front-end display.
 2. Add moduels of `get_usr_id.py` and `get_topic.py`.
@@ -78,7 +78,7 @@
 
 ---
 
-## 日志
+## <span id="rizhi">日志</span>
 ### 2020年5月15日
 1. 加入前端组成员。
 2. 增加 `get_usr_id.py` 和 `get_topic.py` 模块。
@@ -134,7 +134,7 @@
 <br><br>
 
 ---
-## DEVELOPMENT
+## <span id="development">DEVELOPMENT</span>
 
 ### 2020.5.11
 #### 问题：
@@ -158,10 +158,10 @@
 
 #### 近期目标：
 1. **Spider Group**: 
-    + 完善目前基于检索词获取微博正文的代码 
-    + 大规模爬取数据
-    + 研究分布式爬取和后台部署
-    + 为其他组提供需要的数据
+    -  完善目前基于检索词获取微博正文的代码 
+    - 大规模爬取数据
+    - 研究分布式爬取和后台部署
+    - 为其他组提供需要的数据
 2. **Web Group**:
     + 前后端调通
     + 整理好json数据格式
