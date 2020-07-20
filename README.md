@@ -22,20 +22,78 @@
 
 ## <span id="moduel">1. 模块介绍</span>：
 
-+ ### <span id="spider"> Spider Moduels </span>
++ <span id="spider"> **1.1 Spider Moduels** </span>
 
-    1. `search_uid.py` , 用于获取指定query的用户id，返回用户相关信息的字典
-    2. `get_wbid.py` ,用于获得用户id下的微博id（通过访问用户主页实现）
-    3. `IDRelationship.py` ,用于互相获取微博中复杂的内容识别ID关系，例如您可以通过输入用户微博ID获得其所有的微博博文ID。
-    4. `get_topic.py` 用于获取实时热搜主题以及相应热度，提供两种方式存储：csv, json. *具体格式`[index, topic, score]`* 
-    生成文件命名为 `爬取热搜时间.csv /.json` 
-    5. `get_query_wb`用于根据检索词获取相关微博的id、用户id和用户名，提供存储格式：csv格式和json格式.
-    6. `get_usr_fans.py`用于获取用户的粉丝id以及粉丝名，返回id列表以及名字列表，可生成三个文本文件，分别存储了id、用户名、id与用户名的对应关系
-    7. `additionalFeatures.py` 用于存储一些额外的微博特征的识别方法。现可提供对微博博文的原创性识别功能。
-    8. `fileFormatConversion.py` 为部分csv输出文件提供转换为json格式的功能，在相关内容爬取模块的输出部分会被自动调用。
+```
+Weibo_RepostRelationship_Visualization_Platform/spider/:
+    │  pool_spider.py
+    │  README.md
+    │  word_spider.py
+    │
+    └─utils
+        │  agent.py
+        │  csvWriter.py
+        │  get_more_topic.py
+        │  get_query_info.py
+        │  get_repost_info.py
+        │  loadConfig.py
+        │  logger.py
+        │  standarize_date.py
+        │  __init__.py
+        │
+        └─__pycache__
+```
 
-+ ### <span id="frontend">Front End</span>
 
+1. 模块方法
+---
+- 代理模块`agent.py`
+
+代理模块通过使用代理池模拟多用户请求，并随机生成请求伪装头部
+
+- 写入模块`csvWriter.py`
+
+将此前多个写方法，封装为**csvWriter**类。根据需求生成csv文件或对已有文件进行追加写入
+
+- 获取检索词相关微博模块`get_query_info.py`
+
+根据请求对微博进行爬取，解决了多页爬取，能够获取话题并对微博内容进行格式处理
+
+- 获取转发关系模块`get_repost_info.py`
+
+获取源微博的转发关系，采用读取转发列表的方式，对转发列表的微博id进行遍历爬取
+
+- 扩充话题模块`get_more_topic()`
+
+根据输入的检索词，到微博话题页面检索所有相关话题，将得到的话题列表写入话题文件。
+
+- 时间格式化模块`standarize_date().py`
+
+为之后断点续存问题作准备。
+
+- 日志模块`logger.py`
+
+负责根据进程名生成每个进程对应的目录。
+
+- 加载配置模块`loadConfig`
+
+负责获取用户设置：可设置日志存储路径、话题存储路径、检索词相关微博存储路径、转发关系存储路径、待爬取微博id列表存储路径以及检索次列表。
+
+2. **主功能函数**
+---
+- `word_spider.py`
+    - 获取微博检索页面中所有相关微博
+    - 对每条相关微博获取多层转发关系
+    - 对 searchList 中每一个词进行话题扩充。用 EPOCH 记录迭代次数。将每一轮迭代的到的扩充话题用 EPOCH 次数标记的文件，下一轮迭代的searchList从此文件中读出。
+
+- `pool_spider.py`
+
+生成进程，调用 `word_spider.py` 作为进程内容
+
+<br>
+
++  <span id="frontend">**Front End**</span>
+---
     1. 待更新
 
 + ### <span id="backend">Back End</span>
