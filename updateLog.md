@@ -13,7 +13,7 @@
 <br>
 
 ---
-## <span id="logs">Logs</span>
+## <span id="logs">1. Logs</span>
 ### MAY 15, 2020
 1. Add memebers responsible for front-end display.
 2. Add moduels of `get_usr_id.py` and `get_topic.py`.
@@ -78,7 +78,7 @@
 
 ---
 
-## <span id="rizhi">日志</span>
+## <span id="rizhi">2. 日志</span>
 ### 2020年5月15日
 1. 加入前端组成员。
 2. 增加 `get_usr_id.py` 和 `get_topic.py` 模块。
@@ -134,7 +134,7 @@
 <br><br>
 
 ---
-## <span id="development">DEVELOPMENT</span>
+## <span id="development">3. DEVELOPMENT</span>
 
 ### 2020.5.11
 #### 问题：
