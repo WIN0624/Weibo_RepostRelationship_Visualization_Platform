@@ -1,0 +1,94 @@
+<!--检索结果页-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>search</title>
+    <link rel="stylesheet" type="text/css" href="../css/search.css">
+    <link rel="stylesheet" type="text/css" href="../css/common.css">
+
+</head>
+
+<body>
+    <div class="header" style="background: #00a4ff;font-size: 14px;">
+        <div class="main w1200 block-center flex a-c">
+            <div class="logo">
+                <img src="../img/2.jpg.png" alt="">
+            </div>
+            <div class="right flex">
+                <!-- <div class="heading j-c a-c">weibo spider</div> -->
+                <div class="heading j-c a-c"><a href="index.html">weibo spider</a></div>
+                <div class="flex searcher">
+                    <div class="search_icon"></div>
+                    <input class="input" type="text" placeholder="...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/util.js"></script>
+
+    <!-- showlist的展示表部分，jquery引入数据后append -->
+    <ul class="showlist">
+
+    </ul>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <script type='text/javascript' src='../js/jquery-3.5.1.min.js'></script> -->
+
+    <script>
+        function loadshowlist() {
+
+            var params = getUrlParams()
+            query = params.query
+            // console.log(decodeURI(query))
+            //在输入框中将placeholder中的内容换成输入的query
+            $(".input").attr("placeholder", decodeURI(query))
+
+            $.ajax({
+                type: "GET",
+                url: "http://121.46.19.26:8288/getWeibo/" + query,
+                // url: "../json/hottopic.json",
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    $(".showlist").empty() //如果不加这句，每点一次就会重复上一轮显示。所以要先清空
+                    data.forEach(item => {
+                        $(".showlist").append(`
+                            <li>
+                                <ul style="padding-left: 10px;font-size: 14px;">
+                                    <li> <a href="detail1.html?id=${item.bw_id}&query=${query}" target="_blank" id="topic"> ${item.bw_id}  ${item.content}</a></li>
+                                    <li>${item.user_name}</li>
+                                </ul>
+                            </li>
+                        `)
+                    });
+                }
+            })
+        }
+
+        //页面加载完毕后就调用该方法
+        $(document).ready(function () {
+            loadshowlist()
+        })
+
+        //回车键跳转
+        $(".input").keydown(function (e) {
+            if (e.keyCode === 13) {
+                document.location.href = 'search_notemp.html?query=' + $(".input").val();
+                return false
+            }
+        })
+
+        //点击搜索按钮
+        $(".search_icon").click(function () {
+            document.location.href = 'search_notemp.html?query=' + $(".input").val();
+        })
+
+
+    </script>
+</body>
+
+</html>
