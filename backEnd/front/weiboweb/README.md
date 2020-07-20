@@ -311,7 +311,7 @@ public static float getFloat(String key)
 ##### Client.java功能描述
 
 >Client.java部分的代码用于
-Client.java将WeiboController接收到的Request_query对象qRequest，并转换为rank_response_vs实例，将其通过mina传给server，再接受server的回传。对编码过滤器和会话设置进行初始配置。
+>Client.java将WeiboController接收到的Request_query对象qRequest，并转换为rank_response_vs实例，将其通过mina传给server，再接受server的回传。对编码过滤器和会话设置进行初始配置。
 
 ##### Client.java代码说明
 
@@ -400,12 +400,11 @@ public class Client {
 ##### ClientCodecFactory.java功能描述
 
 >ClientCodecFactory.java用于
-Mina通信中编解码器的申明和注册
+>Mina通信中编解码器的申明和注册
 
 ##### ClientCodecFactory.java代码说明
 
 ```java
-
 public class ClientCodecFactory extends DemuxingProtocolCodecFactory {
     //创建解码器
     private MessageDecoder decoder = new ClientDecoder();
@@ -427,7 +426,7 @@ public class ClientCodecFactory extends DemuxingProtocolCodecFactory {
 ##### ClientEncoder.java功能描述
 
 >ClientEncoder.java用于
-实现编码过程，按照协议拼装传输内容到IoBuffer 缓冲区，然后调用ProtocolEncoderOutput 的write()方法输出字节流。
+>实现编码过程，按照协议拼装传输内容到IoBuffer 缓冲区，然后调用ProtocolEncoderOutput 的write()方法输出字节流。
 
 ##### 编码器编写步骤
 
@@ -446,7 +445,6 @@ public class ClientCodecFactory extends DemuxingProtocolCodecFactory {
 ##### ClientEncoder.java代码说明
 
 ```java
-
 public class ClientEncoder implements MessageEncoder<Request_query> {
     //静态方法创建日志实例
     private final static Logger logger = Logger.getLogger(ClientEncoder.class);
@@ -526,12 +524,11 @@ public class ClientEncoder implements MessageEncoder<Request_query> {
 ##### ClientDecoder.java功能描述
 
 >ClientDecoder.java
-实现解码过程，可以实现ProtocolDecoder 接口，其中有decode()、finishDecode()、dispose()三个方法，其中，主要关注decode()方法即可。
+>实现解码过程，可以实现ProtocolDecoder 接口，其中有decode()、finishDecode()、dispose()三个方法，其中，主要关注decode()方法即可。
 
 ##### ClientDecoder.java代码说明
 
 ```java
-
 public class ClientDecoder implements MessageDecoder {
     //静态方法创建日志实例
     private final static Logger logger = Logger.getLogger(ClientDecoder.class);
@@ -622,12 +619,11 @@ public class ClientDecoder implements MessageDecoder {
 ##### ClientHandler.java功能描述
 
 >ClientHandler.java
-ClientHandler类用于进行逻辑处理，类中的方法在通信中发生相应事件时触发，暂未使用
+>ClientHandler类用于进行逻辑处理，类中的方法在通信中发生相应事件时触发，暂未使用
 
 ##### ClientHandler.java代码说明
 
 ```java
-
 //ClientHandler类用于进行逻辑处理，暂未使用
 
 public class ClientHandler implements IoHandler {
@@ -705,6 +701,110 @@ public class ReadDataFromRedis {
         jedis.close();
         return wb_id;
     }
+}
+```
+
+
+
+### Util.java说明
+
+在使用mina的时候，会出现字符间相互转换的现象，为了**解决编码**的问题，用Util类检测和转换字节序
+
+#### Util.java功能说明
+
+Util.java提供了在不同类型的数据之间进行转换的方法，它将发送报文的数据形式转化成远程主机响应报文的数据类型。
+
+#### Util.java代码说明
+
+```java
+public final class Util {
+public static int convertEndian(int i) {
+	return makeInt((byte) (i & 0xFF), (byte) ((i >>> 8) & 0xFF), (byte) ((i >>> 16) & 0xFF),
+	(byte) ((i >>> 24) & 0xFF));
+	}
+//把32位的int通过移位转换为4个byte
+    
+public static long convertEndian(long i) {
+	return makeLong((byte) (i & 0xFF), (byte) ((i >>> 8) & 0xFF), (byte) ((i >>> 16) & 0xFF),
+			(byte) ((i >>> 24) & 0xFF), (byte) ((i >>> 32) & 0xFF), (byte) ((i >>> 40) & 0xFF),
+			(byte) ((i >>> 48) & 0xFF), (byte) ((i >>> 56) & 0xFF));
+}
+//把64位的long通过移位转换为8个byte
+
+public static short makeShort(byte b1, byte b0) {
+	return (short) (((b1 & 0xff) << 8) | ((b0 & 0xff) << 0));
+}
+//byte是8位，short是16位，b1左移8位+b2就等于short
+
+public static int makeInt(byte b3, byte b2, byte b1, byte b0) {
+	return (int) ((((b3 & 0xff) << 24) | ((b2 & 0xff) << 16) | ((b1 & 0xff) << 8) | ((b0 & 0xff) << 0)));
+}
+//同理makeShort
+
+public static long makeLong(byte b7, byte b6, byte b5, byte b4, byte b3, byte b2, byte b1, byte b0) {
+	return ((((long) b7 & 0xff) << 56) | (((long) b6 & 0xff) << 48) | (((long) b5 & 0xff) << 40)
+			| (((long) b4 & 0xff) << 32) | (((long) b3 & 0xff) << 24) | (((long) b2 & 0xff) << 16)
+			| (((long) b1 & 0xff) << 8) | (((long) b0 & 0xff) << 0));
+}
+//同理makeShort
+
+private final static Gson gson = new GsonBuilder().disableInnerClassSerialization().serializeNulls()
+		.disableHtmlEscaping().serializeSpecialFloatingPointValues().create();
+//使用GsonBuilder构建gson,禁用内部类序列化,支持空对象序列化,跳过html特殊符号转码，支持特殊值序列化
+
+public static String toJsonString(Object obj) {
+	return gson.toJson(obj);
+}
+//返回JsonString
+
+public static <T> T fromJson(Reader json, Class<T> classOfT) {
+	return gson.fromJson(json, classOfT);
+}
+//从Json相关对象到Java实体
+
+public static <T> T fromJson(String json, Class<T> classOfT) {
+	return gson.fromJson(json, classOfT);
+}
+//从Json相关对象到Java实体
+}
+```
+
+
+
+### Nshead.java说明
+
+Nshead.java主要说明mina通讯中发送消息的一些参数
+
+#### Nshead.java功能说明
+
+Nshead.java对一些无符号的参数进行配置，说明了这些参数的长度范围，其中log_id用来作为一次request到response请求以及到相应到客户端的数据的请求的唯一标识，magic_num用来标记文件或者协议的格式，body_len说明了响应体的最大长度
+
+#### Nshead.java代码说明
+
+```java
+public class Nshead {
+	public final static int HEAD_LENGTH = 36;
+
+	// unsigned short id;
+	public short id;
+
+	// unsigned short version;
+	public short version;
+
+	// unsigned int log_id;
+	public int log_id;
+
+	public byte[] provider = new byte[16];
+
+	// unsigned int magic_num;
+	public int magic_num = 0xfb709394;
+
+	// unsigned int reserved;
+	public int reserved;
+
+	// unsigned int body_len;
+	// 在DA中len最大不能超过Integer.MAX_VALUE
+	public int body_len;
 }
 ```
 
