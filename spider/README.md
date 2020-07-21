@@ -54,7 +54,7 @@
 - 将相关微博的总id列表切分成10份
 - 建立进程池（10个进程），传入每个相关微博列表，对其中每个id爬取转发关系
 
-[增加的相关函数]
+[针对`one_word_spider`增加的相关函数]
 - get_query_info.py：`one_word_get_query_info()`。建立one_word_spider的getQuery日志，获取检索信息。
 - get_repost_info.py：`one_word_get_repost_relationship()`。
     - 根据进程名生成爬取日志
