@@ -34,10 +34,11 @@
 负责获取用户设置：
 - 日志存储路径`log_dir`
 - 话题存储路径`topic_dir`。此处话题指根据检索词扩充获得的话题，以csv文件存储。
-- 检索词相关微博存储路径`hot_data_dir`。
-- 转发关系信息存储路径`repost_data_dir`。
-- 所有待爬取微博id列表的存储路径`temp_dir`。
-- 检索词列表。若为文件进行相应的读取操作。
+- 检索词相关微博存储路径`hot__dir`。
+- 转发关系信息存储路径`repost_dir`。
+- 所有待爬取微博id列表的存储路径`repost_temp_dir`。
+- one_word_spider中多进程爬取的转发关系暂存路径`one_word_repost_dir`。
+- 检索词列表`searchlist`。可以列表形式传入，若为文件则设为文件名，将会进行相应的读取操作。
 ## 2. 主功能函数
 ### 2.1 `word_spider.py`
 - 对 searchList 中每一个词
