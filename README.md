@@ -29,7 +29,8 @@
         │  pool_spider.py
         │  README.md
         │  word_spider.py
-        │
+        │  one_word_spider.py
+        |
         └─utils
             │  agent.py
             │  csvWriter.py
@@ -75,6 +76,10 @@
 
 #### 1.1.2 主功能函数
 ---
+- `one_word_spider.py`
+    - 获取一个检索词在微博检索页面中所有相关微博
+    - 对每条相关微博获取多层转发关系（10个进程同时处理）
+
 - `word_spider.py`
     - 获取微博检索页面中所有相关微博
     - 对每条相关微博获取多层转发关系
@@ -83,6 +88,7 @@
 - `pool_spider.py`
 
     - 生成进程，调用 `word_spider.py` 作为进程内容
+
 
 <br>
 
