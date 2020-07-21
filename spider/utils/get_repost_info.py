@@ -2,6 +2,7 @@ import os
 import time
 import json
 import requests
+import multiprocessing
 from retrying import retry
 from jsonpath import jsonpath
 from datetime import datetime
@@ -12,6 +13,19 @@ from utils.agent import get_header, get_proxy
 from utils.standarize_date import standardize_date
 
 
+def one_word_repost_relationship(searchList):
+    # 据进程名生成日志
+    name = multiprocessing.current_process().name
+    logger = getLogger(name)
+    # 生成写文件
+    repost_dir = load_config()['one_repost_dir']
+    repost_file = repost_dir + 'repost_Relationship_' + name + '.csv'
+    repost_writer = csvWriter(repost_file, repost=True)
+    logger.info('Strat getting repost...')
+    for id in searchList:
+        get_repost_relationship(id, repost_writer, logger)
+
+
 # 获取转发关系的主函数
 def get_repost_relationship(bw_id, repost_writer, logger):
     # 初始化层数为1，仍可以获取转发关系
@@ -20,7 +34,7 @@ def get_repost_relationship(bw_id, repost_writer, logger):
     center_bw_id = bw_id
     # 类层次遍历处理转发关系
     # 为了节省内存，将每一层的层级关系写入文件
-    temp_dir = load_config(temp=True)
+    temp_dir = load_config()['repost_temp_dir']
     temp_file = temp_dir + f'Level_{level+1}_{center_bw_id}.csv'
     temp_writer = csvWriter(temp_file, temp=True)
     # 写入该id一级转发信息并将转发bw_id放入队列
