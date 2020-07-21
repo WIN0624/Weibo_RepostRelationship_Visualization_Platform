@@ -108,7 +108,6 @@
 <br><br>
 
 ## <span id="updatedocument">2. 更新日志</span>
----
 [开发日志](updateLog.md)将会实时更新。
 
 日志记录了科研小组在开发过程中的所有会议记录和相关更新的详细日志。如果对此感兴趣，可以从中根据我们的开发迭代过程，了解我们的开发历程，并强烈欢迎您提出建议。
@@ -116,7 +115,6 @@
 <br><br>
 
 ## <span id="pythondependance">3. 如何安装python依赖？</span>
----
 您可能需要安装python以来以来才能实现以上工作。我们提供了专门的依赖文档供您一键安装所有python依赖。
 
 使用 `pip install -r requirements.txt` 命令即可完成python第三方库依赖的安装。
@@ -124,7 +122,6 @@
 <br><br>
 
 ## <span id="aboutus">4. 关于我们</span>
----
 > 该项目用于构建微博通用搜索和信息分析平台，贡献者主要分为爬虫、前端展示和后端存储三组。
 
 **Spider Contributors**: Zeng Ying, Zhong Shanshan, Pan Ziyang, Chen Lehua, Huang Zhishan, Yu Yixia.
