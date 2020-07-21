@@ -2,26 +2,21 @@ import csv
 import json
 
 
-def load_config(dir=False, log=False, temp=False):
+def load_config():
     # 获取数据输出路径和检索词
-    config = json.load(open('config.json', 'r', encoding='utf-8'))
-    log_dir = config['log_dir']
-    temp_dir = config['temp_dir']
-    topic_dir = config['topic_dir']
-    hot_data_dir = config['hot_data_dir']
-    repost_data_dir = config['repost_data_dir']
-    # 当被logger调用时，仅返回目录路径
-    if (log):
-        return log_dir
-    # 当被word_spider调用时，返回数据路径和话题存储路径
-    if (dir):
-        return topic_dir, hot_data_dir, repost_data_dir
-    if (temp):
-        return temp_dir
+    raw_config = json.load(open('config.json', 'r', encoding='utf-8'))
+    config = {}
+    config['log_dir'] = raw_config['log_dir']
+    config['hot_dir'] = raw_config['hot_dir']
+    config['topic_dir'] = raw_config['topic_dir']
+    config['repost_dir'] = raw_config['repost_dir']
+    config['repost_temp_dir'] = raw_config['repost_temp_dir']
+    config['one_repost_dir'] = raw_config['one_word_repost_dir']
 
-    searchlist = config['search_list']
-    # 只能传入csv类型
-    if type(searchlist) is str:
+    # 处理检索词列表
+    searchlist = raw_config['searchlist']
+    # 只能传入csv或txt类型
+    if type(searchlist) is str and '.csv' in searchlist and '.txt' in searchlist:
         with open(searchlist, 'r', encoding='utf-8-sig') as f:
             if ('.csv' in searchlist):
                 rows = csv.reader(f)
@@ -29,6 +24,7 @@ def load_config(dir=False, log=False, temp=False):
             if ('.txt' in searchlist):
                 rows = f.readlines()
                 searchlist = [row.strip() for row in rows]
+    config['searchlist'] = searchlist
 
     # 否则为pool_spider调用，返回检索词列表
-    return searchlist
+    return config

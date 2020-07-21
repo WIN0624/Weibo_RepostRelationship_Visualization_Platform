@@ -12,7 +12,10 @@ from utils.get_repost_info import get_repost_relationship
 # 参数为初始检索词列表，进程名
 def word_spider(searchlist):
     # 加载设置文件，获取数据输出路径和检索词
-    topic_dir, hot_dir, repost_dir = load_config(dir=True)
+    config = load_config()
+    hot_dir = config['hot_dir']
+    topic_dir = config['topic_dir']
+    repost_dir = config['repost_dir']
     # 根据规定日志目录创建目录实例
     name = multiprocessing.current_process().name
     logger = getLogger(name)
