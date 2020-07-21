@@ -79,6 +79,7 @@ def get_query_info(wd, writer, logger, since_date=None):
                                 'user_id': mblog['user']['id'],
                                 'screen_name': mblog['user']['screen_name'],
                                 'bw_id': mblog['id'],
+                                'repost_count': mblog['reposts_count'],
                                 'topic': this_topic,
                                 'content': this_text,
                                 'created_at': mblog['created_at']

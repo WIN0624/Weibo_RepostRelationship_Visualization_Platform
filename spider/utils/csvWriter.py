@@ -10,7 +10,7 @@ class csvWriter(object):
         self.repost = repost
         self.temp = temp
         if self.search:
-            self.header = ['keyword', 'user_id', 'screen_name', 'bw_id', 'topic', 'content', 'created_at']
+            self.header = ['keyword', 'user_id', 'screen_name', 'bw_id', 'repost_count', 'topic', 'content', 'created_at']
             self.create_csv()
         if self.repost:
             self.header = ['center_bw_id', 'user_id', 'screen_name', 'bw_id', 'origin', 'repost_count', 'fs_count', 'fs_user_id', 'fs_screen_name', 'fs_bw_id', 'fs_fans_count', 'level', 'raw_text', 'created_at']
