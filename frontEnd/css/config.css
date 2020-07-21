@@ -1,0 +1,63 @@
+body{
+   
+    width: 100%;
+    height: 100%
+}
+.header
+{
+    height:100vh;
+    background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url(../img/image.jpg);
+    /* 使界面和背景图匹配 */
+    background-size:cover; 
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+}
+h1{
+    color:#fff;
+    margin-bottom: 70px;
+    font-size:45px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+ul{
+    padding-top:20px;
+    width:30%;
+    margin:0 50% 0 35%;
+}
+.search-field
+{
+    height:50px;
+    padding:10px;
+    border:none;
+    border-radius: 25px;
+    outline: none;
+}
+.keywords
+{
+    width:400px;
+}
+.business
+{
+    width:400px;
+}
+.search-btn
+{
+    height:50px;
+    width:150px;
+    background:#ffeb3b;
+    border:none;
+    color:#000;
+    border-radius: 25px;
+}
+.search-btn:hover{
+    background: #ffc107;
+    cursor:pointer;
+
+}
+.form-box{
+    background: rgba(0,0,0,0.5);
+    padding: 30px;
+}

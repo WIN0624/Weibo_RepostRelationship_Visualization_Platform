@@ -1,0 +1,120 @@
+<!-- 详情页 -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sina Spider</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.8.0/echarts.min.js"></script>
+    <script src="../js/jquery-3.5.1.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../css/style6.css">
+</head>
+
+<body>
+    <div class="nav" id="top">
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="#">NEWS</a></li>
+            <li><a href="#" class="now">REPOST RELATIONSHIP</a></li>
+            <li><a href="#">CONTACT</a></li>
+            <li><a href="#">ABOUT</a></li>
+        </ul>
+    </div>
+    <div class="div1">
+        <div class="header">
+            <img src="../img/2.jpg.png" alt="icon.jpg">
+            Sina Spider
+            <!--搜索框-->
+            <span class="search">
+                <input type="text" placeholder="Whatever comes to your mind..." name="name" id="search1" />
+                <input type="button" value="click" id="button1" />
+            </span>
+        </div>
+
+        <div class="div3">
+            <span>What you search:</span><span id="what"></span>
+            <h4 id="user_name"></h4>
+            <p id="bw_text"></p>
+        </div>
+
+        <!--绘制力导向图-->
+        <div class="chart1" id="main"></div>
+
+        <div class="explanation">
+            <p class="p1">Explanation:</p>
+            <p class="p2">The chart shows you the forwarding relationship of this piece of weibo.</p>
+        </div>
+
+    </div>
+
+    <div class="bottom">
+        ©
+        <span>XXX</span>
+        . All Rights Reserved
+    </div>
+    <div class="return">
+        <a href="#top">▲</a>
+    </div>
+
+    <script src="../js/repostRelationship3.1.js"></script>
+    <script src="../js/util.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            // 获取博文信息
+            var params = getUrlParams()
+            $.ajax({
+                type: "GET",
+                //url: "http://121.46.19.26:8288/getRelationshipBody/"+$("#search1").val(),
+                url: "http://121.46.19.26:8288/getRelationshipBody/" + params.id,
+
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    $("#user_name").html(data.user_name);
+                    $("#bw_text").html(data.content);
+                    $("#what").html(data.query);
+                    $("#what").html(decodeURI(params.query));
+
+                },
+                error: function (jqXHR) {
+                    alert("原博文发生错误：" + jqXHR.status);
+                },
+                async: false
+            });
+            // 制作关系图
+            $.ajax({
+                type: "GET",
+                url: "http://121.46.19.26:8288/getRelationship/" + params.id,
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    graph(data);
+                },
+                error: function (jqXHR) {
+                    alert("关系图发生错误：" + jqXHR.status);
+                },
+            });
+
+
+        })
+
+        //点击搜索按钮，显示新关键词的搜索结果
+        $("#button1").click(function () {
+            document.location.href = 'search_notemp.html?query=' + $("#search1").val();
+        })
+
+        $("#what").keydown(function (e) {
+            if (e.keyCode === 13) {
+                document.location.href = 'search_notemp.html?query=' + $("#search1").val();
+                return false
+            }
+        })
+    </script>
+</body>
+
+</html>
