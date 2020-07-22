@@ -70,6 +70,7 @@ def merge_csv(wd, one_repost_dir, repost_dir):
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Finish Merging!')
 
 
+# 针对断点
 def one_word_continue():
     # 加载设置文件，获取数据输出路径和检索词
     config = load_config()
