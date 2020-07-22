@@ -2,7 +2,6 @@ import os
 import time
 import json
 import requests
-import multiprocessing
 from retrying import retry
 from jsonpath import jsonpath
 from datetime import datetime
@@ -15,7 +14,7 @@ from utils.standarize_date import standardize_date
 
 def one_word_repost_relationship(searchList):
     # 据进程名生成日志
-    name = multiprocessing.current_process().name
+    name = str(os.getpid())
     logger = getLogger(name)
     # 生成写文件
     repost_dir = load_config()['one_repost_dir']
@@ -24,6 +23,7 @@ def one_word_repost_relationship(searchList):
     logger.info('Strat getting repost...')
     for id in searchList:
         get_repost_relationship(id, repost_writer, logger)
+    logger.info('Finish!')
 
 
 # 获取转发关系的主函数
@@ -124,7 +124,7 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
             page_count += 1
             result_list = []
             try:
-                time.sleep(3)
+                time.sleep(8)
                 this_url = base_url + str(page_count)
                 logger.info(f'Center bw : {center_bw_id}. level: {level}. Crawling page {page_count} of bw {bw_id}.')
                 r = requests.get(this_url, headers=get_header(), proxies=get_proxy())

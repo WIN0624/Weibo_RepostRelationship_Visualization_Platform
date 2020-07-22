@@ -12,6 +12,7 @@ def load_config():
     config['repost_dir'] = raw_config['repost_dir']
     config['repost_temp_dir'] = raw_config['repost_temp_dir']
     config['one_repost_dir'] = raw_config['one_word_repost_dir']
+    config['breakpos'] = raw_config['breakpos']
 
     # 处理检索词列表
     searchlist = raw_config['searchlist']
