@@ -109,4 +109,4 @@
   <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151705.png" width="70%" height="70%">
 
 * 影响2：将爬取紊乱微博的转发关系时，level各不相同。实际上，仅最高level为正确的层数。<br>
-<img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724152940.png" width="70%" height="70%">
+  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724152940.png" width="60%" height="60%">
