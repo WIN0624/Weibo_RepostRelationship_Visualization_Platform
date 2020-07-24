@@ -1,5 +1,5 @@
 import csv
-# import pandas as pd
+import pandas as pd
 
 
 class csvWriter(object):
@@ -55,16 +55,17 @@ class csvWriter(object):
                 csv_writer.writerows(result_list)
 
     # 去重
-    # pandas对大文件去重慢，交由数据库端进行去重
-    '''
-    def drop_duplicate(self):
-        # 默认第一行作为表头
-        # 为了确保数据库导入
-        df = pd.read_csv(self.filename, encoding='utf-8')
-        df.drop_duplicates(keep='last', inplace=True)
-        # 去除Pandas给得行索引index
-        df.to_csv(self.filename, index=False, encoding='utf-8', sep=',')
-    '''
+    # pandas去重无法实现根据条件去重，则很多末层转发的fs_bw_id都为‘Null’
+    # 只能分为两部分，再整合
+    def drop_duplicates(self):
+        df = pd.read_csv(self.filename, header=0)
+        df = df.drop_duplicates(['user_id', 'fs_bw_id'], keep='last')
+        df1 = df.loc[df['fs_bw_id'] == 'Null']
+        df2 = df.loc[df['fs_bw_id'] != 'Null']
+        df2 = df2.drop_duplicates('fs_bw_id', keep='last')
+        df = pd.concat([df1, df2], axis=0)
+        df = df.sort_index(axis=0, ascending=True)
+        df.to_csv(self.filename, index=False)
 
     # 获取要爬取转发关系的列表
     def get_idList(self):

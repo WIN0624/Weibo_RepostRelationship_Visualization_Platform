@@ -1,6 +1,7 @@
 import csv
 import glob
 import time
+import pandas as pd
 from multiprocessing import Pool
 from pool_spider import split_searchList
 from utils.csvWriter import csvWriter
@@ -55,7 +56,8 @@ def merge_csv(wd, one_repost_dir, repost_dir):
     csv_list = glob.glob(one_repost_dir + '*.csv')
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Find {str(len(csv_list))} csv files in total.')
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Start Merging csv Files...')
-    with open(repost_dir + 'repost_Relationship_' + wd + '.csv', 'w', encoding='utf-8-sig', newline='') as f:
+    filename = repost_dir + 'repost_Relationship_' + wd + '.csv'
+    with open(filename, 'w', encoding='utf-8-sig', newline='') as f:
         f_csv = csv.writer(f)
         count = 1
         for file in csv_list:
@@ -67,7 +69,20 @@ def merge_csv(wd, one_repost_dir, repost_dir):
                     rows = list(f2_csv)
                     f_csv.writerows(rows[1:])
                 count += 1
+    # 去重
+    drop_duplicates(filename)
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Finish Merging!')
+
+
+def drop_duplicates(filename):
+    df = pd.read_csv(filename, header=0)
+    df = df.drop_duplicates(['user_id', 'fs_bw_id'], keep='last')
+    df1 = df.loc[df['fs_bw_id'] == 'Null']
+    df2 = df.loc[df['fs_bw_id'] != 'Null']
+    df2 = df2.drop_duplicates('fs_bw_id', keep='last')
+    df = pd.concat([df1, df2], axis=0)
+    df = df.sort_index(axis=0, ascending=True)
+    df.to_csv(filename, index=False)
 
 
 # 针对断点

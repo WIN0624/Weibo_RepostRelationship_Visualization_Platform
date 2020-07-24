@@ -42,6 +42,8 @@ def word_spider(searchlist):
             for bw_id in idList:
                 get_repost_relationship(bw_id, repost_writer, logger)
 
+            repost_writer.drop_duplicates()
+
             # 获取该词相关所有话题作为之后的检索词
             get_more_topic(wd, epoch, topic_dir, logger)
 
