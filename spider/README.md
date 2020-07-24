@@ -9,6 +9,7 @@
 - `__init__()`可以根据检索或获取转发关系，生成不同的csv头部字段，并调用create_csv。
 - `create_csv()`负责产生文件并写入头部。
 - `write_csv()`负责将爬取到的数据，不断追加入文件。
+- `drop_duplicates()`负责处理[转发关系紊乱][#4. 转发关系紊乱问题说明]的问题。
 - `get_idList()`负责获取将要爬取转发关系的下一组微博的id列表。
 ### 1.3	获取检索词相关微博模块`get_query_info.py`
 其中：
@@ -40,6 +41,7 @@
 - one_word_spider中多进程爬取的转发关系暂存路径`one_word_repost_dir`。
 - 检索词列表`searchlist`。可以列表形式传入，若为文件则设为文件名，将会进行相应的读取操作。
 ## 2. 主功能函数
+
 ### 2.1 `word_spider.py`
 - 对 searchList 中每一个词
     - 获取微博检索页面中所有相关微博
@@ -62,7 +64,26 @@
     - 获取对应的存储路径，生成csvWriter
     - 接收id列表，对于其中每个id，调用`get_repost_relationship()`
 ## 3. 待完成内容
-### 3.1 写入模块中的去重方法`drop_duplicate()`
-- [ ] 去重且针对层次错乱问题，需要去除转发关系中出现在多个层次的同一条微博，只取最高层。
-### 3.2 `user_spider.py`
+### 3.1 `user_spider.py`
 - [ ] 根据用户名获取所有微博，并对每条微博获取多层转发关系。可用于之后研究特定大V的热门微博转发情况。
+
+## 4. 转发关系紊乱问题说明
+
+### 4.1 紊乱在微博页面的显示
+    在爬取微博的直接转发关系时，会发现混入间接转发的内容，而爬虫会将这些当做直接转发的微博处理。
+![20200724121139](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724121139.png)
+
+### 4.2 紊乱在爬取数据中的体现
+* 问题：同一条微博，同时属于多个层。<br>
+  对于显示紊乱的微博，其在整一条转发链中每次都会出现。以A为原创微博为例，转发链为"A <-B <-C <-D <-E"，若E为紊乱微博，则在爬取A、B、C、D时都会出现，则爬虫会多次记录，将E处理为第1、2、3、4层转发，即与B（直接转发A）、C、D同层，且最后将其记录为D的直接转发
+> 注：整条转发链上的其它微博也会重复记录（如C、D）
+
+* 影响1：将爬取A、B、C直接转发时，对应字段会反复出现这条微博。如微博
+![20200724151530](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151530.png)
+其转发数据显示如下（实际上应取最后一层）：
+![20200724151705](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151705.png)
+
+* 影响2：将爬取紊乱微博的转发关系时，level各不相同。实际上，仅最高level为正确的层数。
+![![20200724150925](httpsraw.githubusercontent.comWIN0624IMAGEmasterimg20200724150925.png)](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/!%5B20200724150925%5D(httpsraw.githubusercontent.comWIN0624IMAGEmasterimg20200724150925.png).png)
+
+
