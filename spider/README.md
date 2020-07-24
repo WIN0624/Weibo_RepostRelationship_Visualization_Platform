@@ -1,4 +1,26 @@
-# Document of Spider
+<!-- TOC -->
+
+- [1. 基本架构](#1-基本架构)
+    - [1.1	代理模块`agent.py`](#11	代理模块agentpy)
+    - [1.2 写入模块`csvWriter.py`](#12-写入模块csvwriterpy)
+    - [1.3	获取检索词相关微博模块`get_query_info.py`](#13	获取检索词相关微博模块get_query_infopy)
+    - [1.4 获取转发关系模块`get_repost_info.py`](#14-获取转发关系模块get_repost_infopy)
+    - [1.5 扩充话题模块`get_more_topic()`](#15-扩充话题模块get_more_topic)
+    - [1.6 时间格式化模块`standarize_date().py`](#16-时间格式化模块standarize_datepy)
+    - [1.7 日志模块`logger.py`](#17-日志模块loggerpy)
+    - [1.8 加载配置模块`loadConfig`](#18-加载配置模块loadconfig)
+- [2. 主功能函数](#2-主功能函数)
+    - [2.1 `word_spider.py`](#21-word_spiderpy)
+    - [2.2 `pool_spider.py`](#22-pool_spiderpy)
+    - [2.3 `one_word_spider.py` | 补充函数 | 加快转发关系爬取](#23-one_word_spiderpy--补充函数--加快转发关系爬取)
+- [3. 待完成内容](#3-待完成内容)
+    - [3.1 `user_spider.py`](#31-user_spiderpy)
+- [4. 转发关系紊乱问题说明](#4-转发关系紊乱问题说明)
+    - [4.1 紊乱在微博页面的显示](#41-紊乱在微博页面的显示)
+    - [4.2 紊乱在爬取数据中的体现](#42-紊乱在爬取数据中的体现)
+
+<!-- /TOC -->
+
 ## 1. 基本架构
 ### 1.1	代理模块`agent.py`
 其中:
@@ -9,7 +31,7 @@
 - `__init__()`可以根据检索或获取转发关系，生成不同的csv头部字段，并调用create_csv。
 - `create_csv()`负责产生文件并写入头部。
 - `write_csv()`负责将爬取到的数据，不断追加入文件。
-- `drop_duplicates()`负责处理[转发关系紊乱][#4. 转发关系紊乱问题说明]的问题。
+- `drop_duplicates()`负责处理[转发关系紊乱](#4-转发关系紊乱问题说明)的问题。
 - `get_idList()`负责获取将要爬取转发关系的下一组微博的id列表。
 ### 1.3	获取检索词相关微博模块`get_query_info.py`
 其中：
@@ -80,12 +102,11 @@
   若E为紊乱微博，则在爬取A、B、C、D时都会出现该紊乱微博，则爬虫会多次记录，将E分别处理为第1、2、3、4层转发，即其与B（直接转发A）、C、D同层，且最后将其记录为D的直接转发。
 > 注：整条转发链上的其它微博也会重复记录（如C、D）
 
-* 影响1：爬取A、B、C直接转发时，对应字段会反复出现这条微博。如微博
-<img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151530.png" width="50%" height="50%">
-其转发数据显示如下（实际上应取最后一层）：
-<img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151705.png" width="50%" height="50%">
+* 影响1：爬取A、B、C直接转发时，对应字段会反复出现这条微博<br>
+  [例子]<br>
+  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151530.png" width="50%" height="50%"><br>
+  其转发数据显示如下（实际上应取最后一层）：<br>
+  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151705.png" width="70%" height="70%">
 
-* 影响2：将爬取紊乱微博的转发关系时，level各不相同。实际上，仅最高level为正确的层数。
-![![20200724150925](httpsraw.githubusercontent.comWIN0624IMAGEmasterimg20200724150925.png)](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/!%5B20200724150925%5D(httpsraw.githubusercontent.comWIN0624IMAGEmasterimg20200724150925.png)
-
-
+* 影响2：将爬取紊乱微博的转发关系时，level各不相同。实际上，仅最高level为正确的层数。<br>
+<img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724152940.png" width="70%" height="70%">
