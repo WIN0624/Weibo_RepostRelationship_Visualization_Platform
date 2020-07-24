@@ -76,9 +76,9 @@ def merge_csv(wd, one_repost_dir, repost_dir):
 
 def drop_duplicates(filename):
     df = pd.read_csv(filename, header=0)
-    df = df.drop_duplicates(['user_id', 'fs_bw_id'], keep='last')
     df1 = df.loc[df['fs_bw_id'] == 'Null']
     df2 = df.loc[df['fs_bw_id'] != 'Null']
+    df1 = df1.drop_duplicates('user_id', keep='last')
     df2 = df2.drop_duplicates('fs_bw_id', keep='last')
     df = pd.concat([df1, df2], axis=0)
     df = df.sort_index(axis=0, ascending=True)
