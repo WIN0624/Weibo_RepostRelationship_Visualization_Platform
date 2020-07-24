@@ -70,20 +70,22 @@
 ## 4. 转发关系紊乱问题说明
 
 ### 4.1 紊乱在微博页面的显示
+    
     在爬取微博的直接转发关系时，会发现混入间接转发的内容，而爬虫会将这些当做直接转发的微博处理。
-![20200724121139](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724121139.png)
+<img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724121139.png" width="50%" height="50%">
 
 ### 4.2 紊乱在爬取数据中的体现
-* 问题：同一条微博，同时属于多个层。<br>
-  对于显示紊乱的微博，其在整一条转发链中每次都会出现。以A为原创微博为例，转发链为"A <-B <-C <-D <-E"，若E为紊乱微博，则在爬取A、B、C、D时都会出现，则爬虫会多次记录，将E处理为第1、2、3、4层转发，即与B（直接转发A）、C、D同层，且最后将其记录为D的直接转发
+* **问题：同一条微博，同时属于多个层** <br>
+  对于显示紊乱的微博，其在整一条转发链中每次都会出现。以A为原创微博为例，转发链为"A <-B <-C <-D <-E"。<br>
+  若E为紊乱微博，则在爬取A、B、C、D时都会出现该紊乱微博，则爬虫会多次记录，将E分别处理为第1、2、3、4层转发，即其与B（直接转发A）、C、D同层，且最后将其记录为D的直接转发。
 > 注：整条转发链上的其它微博也会重复记录（如C、D）
 
-* 影响1：将爬取A、B、C直接转发时，对应字段会反复出现这条微博。如微博
-![20200724151530](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151530.png)
+* 影响1：爬取A、B、C直接转发时，对应字段会反复出现这条微博。如微博
+<img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151530.png" width="50%" height="50%">
 其转发数据显示如下（实际上应取最后一层）：
-![20200724151705](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151705.png)
+<img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151705.png" width="50%" height="50%">
 
 * 影响2：将爬取紊乱微博的转发关系时，level各不相同。实际上，仅最高level为正确的层数。
-![![20200724150925](httpsraw.githubusercontent.comWIN0624IMAGEmasterimg20200724150925.png)](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/!%5B20200724150925%5D(httpsraw.githubusercontent.comWIN0624IMAGEmasterimg20200724150925.png).png)
+![![20200724150925](httpsraw.githubusercontent.comWIN0624IMAGEmasterimg20200724150925.png)](https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/!%5B20200724150925%5D(httpsraw.githubusercontent.comWIN0624IMAGEmasterimg20200724150925.png)
 
 
