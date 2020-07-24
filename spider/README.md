@@ -1,25 +1,4 @@
-<!-- TOC -->
-
-- [1. 基本架构](#1-基本架构)
-    - [1.1	代理模块`agent.py`](#11	代理模块agentpy)
-    - [1.2 写入模块`csvWriter.py`](#12-写入模块csvwriterpy)
-    - [1.3	获取检索词相关微博模块`get_query_info.py`](#13	获取检索词相关微博模块get_query_infopy)
-    - [1.4 获取转发关系模块`get_repost_info.py`](#14-获取转发关系模块get_repost_infopy)
-    - [1.5 扩充话题模块`get_more_topic()`](#15-扩充话题模块get_more_topic)
-    - [1.6 时间格式化模块`standarize_date().py`](#16-时间格式化模块standarize_datepy)
-    - [1.7 日志模块`logger.py`](#17-日志模块loggerpy)
-    - [1.8 加载配置模块`loadConfig`](#18-加载配置模块loadconfig)
-- [2. 主功能函数](#2-主功能函数)
-    - [2.1 `word_spider.py`](#21-word_spiderpy)
-    - [2.2 `pool_spider.py`](#22-pool_spiderpy)
-    - [2.3 `one_word_spider.py` | 补充函数 | 加快转发关系爬取](#23-one_word_spiderpy--补充函数--加快转发关系爬取)
-- [3. 待完成内容](#3-待完成内容)
-    - [3.1 `user_spider.py`](#31-user_spiderpy)
-- [4. 转发关系紊乱问题说明](#4-转发关系紊乱问题说明)
-    - [4.1 紊乱在微博页面的显示](#41-紊乱在微博页面的显示)
-    - [4.2 紊乱在爬取数据中的体现](#42-紊乱在爬取数据中的体现)
-
-<!-- /TOC -->
+## Document for spider
 
 ## 1. 基本架构
 ### 1.1	代理模块`agent.py`
