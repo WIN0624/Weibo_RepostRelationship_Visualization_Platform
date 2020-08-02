@@ -4,19 +4,18 @@ import pandas as pd
 
 class csvWriter(object):
 
-    def __init__(self, filename, search=False, repost=False, temp=False):
+    def __init__(self, filename, search=False, repost=False, temp=False, breakpos=False):
         self.filename = filename
         self.search = search
         self.repost = repost
         self.temp = temp
         if self.search:
             self.header = ['keyword', 'user_id', 'screen_name', 'bw_id', 'repost_count', 'topic', 'content', 'created_at']
-            self.create_csv()
         if self.repost:
             self.header = ['center_bw_id', 'user_id', 'screen_name', 'bw_id', 'origin', 'repost_count', 'fs_count', 'fs_user_id', 'fs_screen_name', 'fs_bw_id', 'fs_fans_count', 'level', 'raw_text', 'created_at']
-            self.create_csv()
         if self.temp:
             self.header = ['bw_id']
+        if not breakpos:
             self.create_csv()
 
     # 创建初始空文件

@@ -12,14 +12,19 @@ from utils.agent import get_header, get_proxy
 from utils.standarize_date import standardize_date
 
 
-def one_word_repost_relationship(searchList):
+def one_word_repost_relationship(searchList, breakpos=None):
     # 据进程名生成日志
     name = str(os.getpid())
     logger = getLogger(name)
-    # 生成写文件
     repost_dir = load_config()['one_repost_dir']
-    repost_file = repost_dir + 'repost_Relationship_' + name + '.csv'
-    repost_writer = csvWriter(repost_file, repost=True)
+    if not breakpos:
+        # 生成写文件
+        repost_file = repost_dir + 'repost_Relationship_' + name + '.csv'
+        repost_writer = csvWriter(repost_file, repost=True)
+    else:  # 断点
+        repost_file = repost_dir + breakpos['repost_file']
+        repost_writer = csvWriter(repost_file, repost=True, breakpos=True)
+        get_repost_relationship(breakpos['center_bw_id'], repost_writer, logger, breakpos['level'])
     logger.info('Strat getting repost...')
     for id in searchList:
         get_repost_relationship(id, repost_writer, logger)
@@ -27,27 +32,26 @@ def one_word_repost_relationship(searchList):
 
 
 # 获取转发关系的主函数
-def get_repost_relationship(bw_id, repost_writer, logger):
-    # 初始化层数为1，仍可以获取转发关系
-    level = 1
+def get_repost_relationship(bw_id, repost_writer, logger, breakpos=None):
     # center_bw_id记录最原始的bw_id
     center_bw_id = bw_id
     # 类层次遍历处理转发关系
     # 为了节省内存，将每一层的层级关系写入文件
     temp_dir = load_config()['repost_temp_dir']
-    temp_file = temp_dir + f'Level_{level+1}_{center_bw_id}.csv'
-    temp_writer = csvWriter(temp_file, temp=True)
-    # 写入该id一级转发信息并将转发bw_id放入队列
-    get_repost_info(center_bw_id, bw_id, level, repost_writer, logger, temp_writer)
-    # 获取一级转发的微博id
-    idList = temp_writer.get_idList()
-
+    # 断点处理
+    if not breakpos:
+        # 初始化层数为0，仍可以获取转发关系
+        level = 1
+        idList = [bw_id]
+    else:
+        level = breakpos
+        break_file = temp_dir + f'Level_{level}_{center_bw_id}.csv'
+        temp_writer = csvWriter(break_file, temp=True, breakpos=True)
+        idList = temp_writer.get_idList()
+    # 爬取转发
     if len(idList) == 0:
         logger.error(f'No repost of center_bw {center_bw_id}.')
     while len(idList) > 0:
-        level += 1
-        # 删除存储本层idList的文件
-        os.remove(temp_file)
         # 创建下一层的原博文件，即该层的转发微博id
         temp_file = temp_dir + f'Level_{level+1}_{center_bw_id}.csv'
         temp_writer = csvWriter(temp_file, temp=True)
@@ -55,6 +59,12 @@ def get_repost_relationship(bw_id, repost_writer, logger):
         for bw_id in idList:
             get_repost_info(center_bw_id, bw_id, level, repost_writer, logger, temp_writer)
         idList = temp_writer.get_idList()
+        if not level == 1:
+            # 删除存储本层idList的文件
+            os.remove(temp_dir + f'Level_{level}_{center_bw_id}.csv')
+        level += 1
+    # 爬取结束后，删除最后一次的temp_file
+    os.remove(temp_file)
 
 
 # 获取原博相关信息
@@ -124,7 +134,7 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
             page_count += 1
             result_list = []
             try:
-                time.sleep(8)
+                time.sleep(6)
                 this_url = base_url + str(page_count)
                 logger.info(f'Center bw : {center_bw_id}. level: {level}. Crawling page {page_count} of bw {bw_id}.')
                 r = requests.get(this_url, headers=get_header(), proxies=get_proxy())

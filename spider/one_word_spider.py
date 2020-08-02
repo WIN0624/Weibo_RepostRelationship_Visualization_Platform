@@ -22,7 +22,7 @@ def one_word_spider():
     else:
         raise ValueError('one_word_spider() can only accept one search word!')
 
-    # 创建写文件
+    # 写文件的文件名
     search_file = hot_dir + 'search_result_' + str(wd) + '.csv'
     # 创建写的对象,同时创建文件
     search_writer = csvWriter(search_file, search=True)
@@ -119,11 +119,12 @@ def one_word_continue():
     for i in range(num):
         temp = searchList[i]
         try:
-            pos = temp.index(breakpos[i])
+            pos = temp.index(breakpos[i]['center_bw_id'])
         except Exception:
             print(f"Break bw_id can't be found in sublist {i} of searchList")
-        thisList = temp[pos:]
-        p.apply_async(one_word_repost_relationship, args=(thisList,))
+            continue
+        thisList = temp[pos+1:]   # 取当前断点之后的id列表，对断点特别处理
+        p.apply_async(one_word_repost_relationship, args=(thisList, breakpos[i]))
     p.close()
     p.join()
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Finish crawling repost relationship!')
