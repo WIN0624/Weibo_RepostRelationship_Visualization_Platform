@@ -26,9 +26,9 @@
     - 处理该层得到的下一组要爬取微博id的写入。
 - `get_origin_info()`。获取原博的相关信息，辅助`get_repost_info()`。
 - `get_repost_info()`。基于每条相关微博id发送请求，解析该微博页面获取转发信息。
-### 1.5 扩充话题模块`get_more_topic()`
+### 1.5 扩充话题模块`get_more_topic.py`
 根据输入的检索词，到微博话题页面检索所有相关话题，将得到的话题列表写入话题文件。
-### 1.6 时间格式化模块`standarize_date().py`
+### 1.6 时间格式化模块`standarize_date.py`
 为之后断点续存问题作准备。
 ### 1.7 日志模块`logger.py`
 负责根据进程名生成每个进程对应的目录。
@@ -72,20 +72,42 @@
 
 ### 4.1 紊乱在微博页面的显示
     
-    在爬取微博的直接转发关系时，会发现混入间接转发的内容，而爬虫会将这些当做直接转发的微博处理。
-<img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724121139.png" width="50%" height="50%">
+  在爬取微博的直接转发关系时，原博的转发会混入间接转发的内容：
+
+  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724121139.png" width="50%" height="50%">
+
+  而按照当前的爬取逻辑，爬虫会将这些间接转发的内容当做直接转发的微博处理。
 
 ### 4.2 紊乱在爬取数据中的体现
-* **问题：同一条微博，同时属于多个层** <br>
-  对于显示紊乱的微博，其在整一条转发链中每次都会出现。以A为原创微博为例，转发链为"A <-B <-C <-D <-E"。<br>
-  若E为紊乱微博，则在爬取A、B、C、D时都会出现该紊乱微博，则爬虫会多次记录，将E分别处理为第1、2、3、4层转发，即其与B（直接转发A）、C、D同层，且最后将其记录为D的直接转发。
-> 注：整条转发链上的其它微博也会重复记录（如C、D）
+* **问题：同一条微博，同时属于多个转发层级** <br>
+  对于显示紊乱的微博，其在整一条转发链的每级爬取都会出现。<br>
+  以A为原创微博为例，转发链为"A <-B <-C <-D <-E"。<br>
+  若E为紊乱微博，则在爬取A、B、C、D时都会出现该紊乱微博，则爬虫会将E分别处理为第1、2、3、4层转发，即其与B（直接转发A）、C、D同层，最后才将其记录为D的直接转发。
+> 注：整条转发链上的其它微博也会重复记录（即以上例子中C、D两条微博也是紊乱微博，会被多次记录）
 
-* 影响1：爬取A、B、C直接转发时，对应字段会反复出现这条微博<br>
+* 体现1：爬取A、B、C直接转发时，对应字段会反复出现这条微博<br>
   [例子]<br>
   <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151530.png" width="50%" height="50%"><br>
   其转发数据显示如下（实际上应取最后一层）：<br>
   <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724151705.png" width="70%" height="70%">
 
-* 影响2：将爬取紊乱微博的转发关系时，level各不相同。实际上，仅最高level为正确的层数。<br>
+* 体现2：将爬取紊乱微博的转发关系时，level各不相同。实际上，仅最高level为正确的层数。<br>
   <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724152940.png" width="60%" height="60%">
+
+  ### 4.3 紊乱的特殊情况
+  对于“观察者网”发布于7月20日的微博：
+
+  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200802085147.png" width="60%" height="60%">
+  
+  爬取到“写手易水浊寒”为一级转发，但浏览其微博发现其是间接转发：
+
+  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200802085711.png" width="60%" height="60%">
+  
+  这似乎是典型的转发紊乱问题，则在爬取数据中应当存在“奇怪的人遇见不奇怪的事”的转发微博，但却没有找到相关数据。直接查看该用户“观察者网”发微博后到“写手易水浊寒”转发之前的所有微博（即7月20日22:43到7月21日01:58），发现并不存在相关的转发微博：
+  
+  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200802090729.png" width="60%" height="60%">
+
+  由此猜测，对于部分转发紊乱问题，其成因是转发链上某些用户设置了查看权限，因此无法爬取到相关微博。此时则需要根据转发微博内容中所含“//@”个数来判断层级（目前的代码尚未对此进行处理）。
+
+  
+  
