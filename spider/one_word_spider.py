@@ -108,7 +108,7 @@ def getBreakList(raw_searchlist, breakpos):
             allList.append(this_dict)
         else:
             num = 1
-            while len(temp) - pos > 15:
+            while pos < len(temp):
                 thisList = temp[pos:pos+15]
                 if num == 1:
                     this_dict = {'thisList': thisList, "breakpos": breakpos[i]}
