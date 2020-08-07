@@ -67,9 +67,13 @@ class csvWriter(object):
         df.to_csv(self.filename, index=False)
 
     # 获取要爬取转发关系的列表
-    def get_idList(self):
+    def get_idList(self, bw_id=None):
         with open(self.filename, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
-            if self.search or self.temp:
-                idList = [row['bw_id'] for row in reader]
+            idList = [row['bw_id'] for row in reader]
+            if self.temp:
+                idList = list(set(idList))  # 减少转发紊乱导致的重复爬取
+                if bw_id:
+                    pos = idList.index(bw_id)  # 必须为字符串形式
+                    idList = idList[pos+1:]
             return idList

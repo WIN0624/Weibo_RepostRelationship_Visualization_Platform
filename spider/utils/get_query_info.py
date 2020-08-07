@@ -79,6 +79,9 @@ def get_query_info(wd, writer, logger, since_date=None):
             if content.get('ok') == 1:
                 mblogs = jsonpath(content, '$.data.cards..mblog')
                 for mblog in mblogs:
+                    # 含有该键的mblog表示该条微博不是原创微博
+                    if mblog.get('retweeted_status'):
+                        continue
                     mblog['created_at'] = standardize_date(mblog['created_at'])
                     this_topic, this_text = getText(mblog)
                     this_dict = {
