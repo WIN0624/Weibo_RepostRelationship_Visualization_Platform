@@ -47,7 +47,7 @@ def get_repost_relationship(bw_id, repost_writer, logger, breakpos=None):
         level = breakpos['level']
         break_file = temp_dir + f'Level_{level}_{center_bw_id}.csv'
         temp_writer = csvWriter(break_file, temp=True, breakpos=True)
-        idList = temp_writer.get_idList(breakpos.get('bw_id'))
+        idList = temp_writer.get_idList(breakpos.get('breakid'))
     # 爬取转发
     if len(idList) == 0:
         logger.error(f'No repost of center_bw {center_bw_id}.')
