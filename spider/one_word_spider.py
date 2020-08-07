@@ -86,10 +86,44 @@ def drop_duplicates(filename):
 
 
 # 针对断点
+def getBreakList(raw_searchlist, breakpos):
+    # 将待爬列表分成10份(与原始的分法对应），对每一份，只取断点之后的微博id
+    # 将子列表作为输入，爬取转发关系
+    searchList = split_searchList(raw_searchlist, 10)
+    num = len(searchList)
+    if len(breakpos) != num:
+        print('You need to Modify this code OR Check if you miss some wb_id in breakpos!')
+    # 适当调整爬取列表长度
+    allList = []
+    for i in range(10):
+        temp = searchList[i]
+        try:
+            pos = temp.index(breakpos[i]['center_bw_id'])
+        except Exception:
+            print(f"Break bw_id can't be found in sublist {i} of searchList")
+            continue
+        if len(temp) - pos < 15:
+            thisList = temp[pos:]   # 取当前断点之后的id列表，对断点特别处理
+            this_dict = {'thisList': thisList, "breakpos": breakpos[i]}
+            allList.append(this_dict)
+        else:
+            num = 1
+            while len(temp) - pos > 15:
+                thisList = temp[pos:pos+15]
+                if num == 1:
+                    this_dict = {'thisList': thisList, "breakpos": breakpos[i]}
+                    allList.append(this_dict)
+                else:
+                    this_dict = {'thisList': thisList, "breakpos": None}
+                    allList.append(this_dict)
+                pos += 15
+                num += 1
+    return allList
+
+
 def one_word_continue():
     # 加载设置文件，获取数据输出路径和检索词
     config = load_config()
-    hot_dir = config['hot_dir']
     repost_dir = config['repost_dir']
     one_repost_dir = config['one_repost_dir']
     searchlist = config['searchlist']
@@ -97,39 +131,32 @@ def one_word_continue():
         wd = searchlist
     else:
         raise ValueError('one_word_spider() can only accept one search word!')
-    search_file = hot_dir + 'search_result_' + str(wd) + '.csv'
+    # 读取已爬取好的检索词相关微博
+    filename = config['hot_dir'] + 'search_result_' + str(wd) + '.csv'
+    reader = csvWriter(filename, search=True, breakpos=True)
+    raw_searchlist = reader.get_idList()
 
     # 根据每个进程此前中断的center_bw_id重新进行爬取
     breakpos = config['breakpos']
-    # 读取已爬取好的检索词相关微博
-    with open(search_file, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        raw_searchlist = [row['bw_id'] for row in reader]
+    allList = getBreakList(raw_searchlist, breakpos)
 
-    # 将待爬列表分成10份，对每一份，只取断点之后的微博id
-    # 将子列表作为输入，爬取转发关系
-    searchList = split_searchList(raw_searchlist, 10)
-    num = len(searchList)
-    if len(breakpos) != num:
-        print('You need to Modify this code OR Check if you miss some wb_id in breakpos!')
-    # 进程池
-    print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Generating Process Pool Containing 10 Process...')
+    # 启动进程池
+    pool_size = len(allList)
+    p = Pool(pool_size)
+    print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Generating Process Pool Containing {str(pool_size)} Process...')
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Start crawling repost relationship...')
-    p = Pool(10)
-    for i in range(num):
-        temp = searchList[i]
-        try:
-            pos = temp.index(breakpos[i]['center_bw_id'])
-        except Exception:
-            print(f"Break bw_id can't be found in sublist {i} of searchList")
-            continue
-        thisList = temp[pos+1:]   # 取当前断点之后的id列表，对断点特别处理
-        p.apply_async(one_word_repost_relationship, args=(thisList, breakpos[i]))
+    
+    for sublist in allList:
+        if sublist.get('breakpos'):
+            p.apply_async(one_word_repost_relationship, args=(sublist['thisList'], sublist['breakpos']))
+        else:
+            p.apply_async(one_word_repost_relationship, args=(sublist['thisList'],))
+
     p.close()
     p.join()
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Finish crawling repost relationship!')
 
-    # 将10个进程的csv文件进行合并
+    # 将所有csv文件进行合并
     merge_csv(wd, one_repost_dir, repost_dir)
 
 

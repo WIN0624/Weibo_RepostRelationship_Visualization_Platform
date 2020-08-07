@@ -54,7 +54,10 @@ def get_repost_relationship(bw_id, repost_writer, logger, breakpos=None):
     while len(idList) > 0:
         # 创建下一层的原博文件，即该层的转发微博id
         temp_file = temp_dir + f'Level_{level+1}_{center_bw_id}.csv'
-        temp_writer = csvWriter(temp_file, temp=True)
+        if breakpos and level == (breakpos + 1):   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
+            temp_writer = csvWriter(break_file, temp=True, breakpos=True)
+        else:
+            temp_writer = csvWriter(temp_file, temp=True)
         # 获得该层所有bw_id的直接转发关系
         for bw_id in idList:
             get_repost_info(center_bw_id, bw_id, level, repost_writer, logger, temp_writer)
@@ -71,7 +74,7 @@ def get_repost_relationship(bw_id, repost_writer, logger, breakpos=None):
 @retry(stop_max_attempt_number=5, wait_fixed=3000)
 def get_origin_info(bw_id, logger):
     try:
-        time.sleep(3)
+        time.sleep(5)
         url = 'https://m.weibo.cn/statuses/show?id=' + str(bw_id)
         r = requests.get(url, headers=get_header(), proxies=get_proxy())
         r.raise_for_status()
@@ -134,7 +137,7 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
             page_count += 1
             result_list = []
             try:
-                time.sleep(6)
+                time.sleep(7)
                 this_url = base_url + str(page_count)
                 logger.info(f'Center bw : {center_bw_id}. level: {level}. Crawling page {page_count} of bw {bw_id}.')
                 r = requests.get(this_url, headers=get_header(), proxies=get_proxy())
