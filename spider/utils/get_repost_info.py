@@ -24,7 +24,7 @@ def one_word_repost_relationship(searchList, breakpos=None):
     else:  # 断点
         repost_file = repost_dir + breakpos['repost_file']
         repost_writer = csvWriter(repost_file, repost=True, breakpos=True)
-        get_repost_relationship(breakpos['center_bw_id'], repost_writer, logger, breakpos['level'])
+        get_repost_relationship(breakpos['center_bw_id'], repost_writer, logger, breakpos)
     logger.info('Strat getting repost...')
     for id in searchList:
         get_repost_relationship(id, repost_writer, logger)
@@ -44,17 +44,17 @@ def get_repost_relationship(bw_id, repost_writer, logger, breakpos=None):
         level = 1
         idList = [bw_id]
     else:
-        level = breakpos
+        level = breakpos['level']
         break_file = temp_dir + f'Level_{level}_{center_bw_id}.csv'
         temp_writer = csvWriter(break_file, temp=True, breakpos=True)
-        idList = temp_writer.get_idList()
+        idList = temp_writer.get_idList(breakpos.get('bw_id'))
     # 爬取转发
     if len(idList) == 0:
         logger.error(f'No repost of center_bw {center_bw_id}.')
     while len(idList) > 0:
         # 创建下一层的原博文件，即该层的转发微博id
         temp_file = temp_dir + f'Level_{level+1}_{center_bw_id}.csv'
-        if breakpos and level == breakpos:   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
+        if level == breakpos and breakpos.get('bw_id'):   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
             temp_writer = csvWriter(break_file, temp=True, breakpos=True)
         else:
             temp_writer = csvWriter(temp_file, temp=True)
