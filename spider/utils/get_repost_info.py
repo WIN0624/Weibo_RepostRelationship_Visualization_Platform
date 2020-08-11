@@ -54,7 +54,7 @@ def get_repost_relationship(bw_id, repost_writer, logger, breakpos=None):
     while len(idList) > 0:
         # 创建下一层的原博文件，即该层的转发微博id
         temp_file = temp_dir + f'Level_{level+1}_{center_bw_id}.csv'
-        if level == breakpos and breakpos.get('bw_id'):   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
+        if level == breakpos and breakpos.get('breakid'):   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
             temp_writer = csvWriter(break_file, temp=True, breakpos=True)
         else:
             temp_writer = csvWriter(temp_file, temp=True)

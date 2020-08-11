@@ -1,5 +1,6 @@
 import csv
 import pandas as pd
+from pandas.core.frame import DataFrame
 
 
 class csvWriter(object):
@@ -72,7 +73,13 @@ class csvWriter(object):
             reader = csv.DictReader(f)
             idList = [row['bw_id'] for row in reader]
             if self.temp:
-                idList = list(set(idList))  # 减少转发紊乱导致的重复爬取
+                # 减少转发紊乱导致的重复爬取
+                # 用set会重新排序，则断点失效
+                df = DataFrame(idList)
+                df.columns = ['bw_id']
+                df = df.drop_duplicates(keep='last')
+                idList = df['bw_id']
+                idList = idList.tolist()
                 if bw_id:
                     pos = idList.index(bw_id)  # 必须为字符串形式
                     idList = idList[pos+1:]
