@@ -71,7 +71,7 @@
 ## 4. 转发关系紊乱问题说明
 
 ### 4.1 紊乱在微博页面的显示
-    
+
   在爬取微博的直接转发关系时，原博的转发会混入间接转发的内容：
 
   <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724121139.png" width="50%" height="50%">
@@ -95,19 +95,25 @@
   <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200724152940.png" width="60%" height="60%">
 
   ### 4.3 紊乱的特殊情况
-  对于“观察者网”发布于7月20日的微博：
+  对于“无为李爷”发布于7月19日的微博：
 
-  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200802085147.png" width="60%" height="60%">
+  <img src="https://gitee.com/WIN0624/document/raw/markdown-picture/img/image-20200813234313255.png" width="65%" height="65%">
   
-  爬取到“写手易水浊寒”为一级转发，但浏览其微博发现其是间接转发：
-
-  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200802085711.png" width="60%" height="60%">
   
-  这似乎是典型的转发紊乱问题，则在爬取数据中应当存在“奇怪的人遇见不奇怪的事”的转发微博，但却没有找到相关数据。直接查看该用户在“观察者网”发微博后到“写手易水浊寒”转发之前的所有微博（即7月20日22:43到7月21日01:58），发现并不存在相关的转发微博：
+
+  爬取到“三观不正向前冲”为一级转发，但浏览其微博发现其是间接转发：
   
-  <img src="https://raw.githubusercontent.com/WIN0624/IMAGE/master/img/20200802090729.png" width="60%" height="60%">
+  <img src="https://gitee.com/WIN0624/document/raw/markdown-picture/img/image-20200813234509604.png" width="60%" height="60%">
+  
+  
 
-  由此猜测，对于部分转发紊乱问题，其成因是转发链上某些用户设置了查看权限，因此无法爬取到相关微博。此时则需要根据转发微博内容中所含“//@”个数来判断层级（目前的代码尚未对此进行处理）。
+  这似乎是典型的转发紊乱问题，则在爬取数据中应当存在“帝吧小帅帅”的转发微博，但却没有找到相关数据，而在“无为李爷”微博的评论区域却发现了这条内容：
 
+  <img src="https://gitee.com/WIN0624/document/raw/markdown-picture/img/image-20200813234630566.png" width="60%" height="60%">
+  
+  
+  
+  可见，对于转发紊乱问题的判断，不能仅仅通过转发微博内容中所含“//@”个数来判断层级，而仍是需要根据最高爬取层级来进行判断。
+  
   
   

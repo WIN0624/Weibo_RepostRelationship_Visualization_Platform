@@ -1,43 +1,54 @@
 import os
+import re
 import time
 import json
+import shutil
 import requests
 from retrying import retry
 from jsonpath import jsonpath
 from datetime import datetime
 from utils.logger import getLogger
 from utils.csvWriter import csvWriter
-from utils.loadConfig import load_config
 from utils.agent import get_header, get_proxy
 from utils.standarize_date import standardize_date
 
 
-def one_word_repost_relationship(searchList, breakpos=None):
+def word_repost_relationship(temp_dir, searchList, breakpos=None):
     # 据进程名生成日志
-    name = str(os.getpid())
+    name = 'getRepost_' + str(os.getpid())
     logger = getLogger(name)
-    repost_dir = load_config()['one_repost_dir']
+    # 每个进程维护一个sublist转发关系的层级目录（临时）
+    level_dir = temp_dir + 'temp/'
+    os.mkdir(level_dir)
+
+    # 断点处理
     if not breakpos:
         # 生成写文件
-        repost_file = repost_dir + 'repost_Relationship_' + name + '.csv'
+        repost_file = temp_dir + name + '.csv'
         repost_writer = csvWriter(repost_file, repost=True)
-    else:  # 断点
-        repost_file = repost_dir + breakpos['repost_file']
+    else:
+        repost_file = temp_dir + breakpos['repost_file']
         repost_writer = csvWriter(repost_file, repost=True, breakpos=True)
-        get_repost_relationship(breakpos['center_bw_id'], repost_writer, logger, breakpos)
+        # 先爬取完断点id，再对余下id按常规爬取
+        get_repost_relationship(breakpos['center_bw_id'], repost_writer, level_dir, logger, breakpos)
+        searchList = searchList[1:]
+
+    # 常规爬取
     logger.info('Strat getting repost...')
     for id in searchList:
-        get_repost_relationship(id, repost_writer, logger)
+        get_repost_relationship(id, repost_writer, level_dir, logger)
     logger.info('Finish!')
+    # 删除临时目录
+    shutil.rmtree(level_dir)
 
 
 # 获取转发关系的主函数
-def get_repost_relationship(bw_id, repost_writer, logger, breakpos=None):
+def get_repost_relationship(bw_id, repost_writer, level_dir, logger, breakpos=None):
     # center_bw_id记录最原始的bw_id
     center_bw_id = bw_id
     # 类层次遍历处理转发关系
-    # 为了节省内存，将每一层的层级关系写入文件
-    temp_dir = load_config()['repost_temp_dir']
+    # 为了节省内存，将每一层的层级关系写入level_dir
+
     # 断点处理
     if not breakpos:
         # 初始化层数为0，仍可以获取转发关系
@@ -45,26 +56,27 @@ def get_repost_relationship(bw_id, repost_writer, logger, breakpos=None):
         idList = [bw_id]
     else:
         level = breakpos['level']
-        break_file = temp_dir + f'Level_{level}_{center_bw_id}.csv'
+        break_file = level_dir + f'Level_{level}_{center_bw_id}.csv'
         temp_writer = csvWriter(break_file, temp=True, breakpos=True)
         idList = temp_writer.get_idList(breakpos.get('breakid'))
+
     # 爬取转发
-    if len(idList) == 0:
-        logger.error(f'No repost of center_bw {center_bw_id}.')
     while len(idList) > 0:
-        # 创建下一层的原博文件，即该层的转发微博id
-        temp_file = temp_dir + f'Level_{level+1}_{center_bw_id}.csv'
-        if level == breakpos and breakpos.get('breakid'):   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
-            temp_writer = csvWriter(break_file, temp=True, breakpos=True)
+        # 创建下一层的原博文件，即该层的转发微博的微博id
+        temp_file = level_dir + f'Level_{level+1}_{center_bw_id}.csv'
+        if level == breakpos and breakpos.get('breakid'):
+            temp_writer = csvWriter(break_file, temp=True, breakpos=True)   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
         else:
-            temp_writer = csvWriter(temp_file, temp=True)
+            temp_writer = csvWriter(temp_file, temp=True)                   # 非断点，则照常创建新文件
+
         # 获得该层所有bw_id的直接转发关系
         for bw_id in idList:
             get_repost_info(center_bw_id, bw_id, level, repost_writer, logger, temp_writer)
+        # 获取下一level的原博id
         idList = temp_writer.get_idList()
+        # 删除存储本层idList的文件
         if not level == 1:
-            # 删除存储本层idList的文件
-            os.remove(temp_dir + f'Level_{level}_{center_bw_id}.csv')
+            os.remove(level_dir + f'Level_{level}_{center_bw_id}.csv')
         level += 1
     # 爬取结束后，删除最后一次的temp_file
     os.remove(temp_file)
@@ -109,7 +121,6 @@ def get_origin_info(bw_id, logger):
 
 
 def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, since_date=None):
-    if_crawl = True
     error = {}
     idList = []
     # 获取原博主信息
@@ -126,6 +137,8 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
     # 可能出现微博删除或无法获取的情况，则不再获取该bw_id
     else:
         return None
+
+    # 转发信息爬取
     if page == 0:
         logger.info(f'Center bw : {center_bw_id}. level: {level}. No repost of this bw {bw_id}.')
         writer.write_csv(None, END=True, center_bw_id=center_bw_id, origin_info=origin_info, level=level)
@@ -148,34 +161,38 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
                     datas = jsonpath(content, '$.data.data.*')
                     for data in datas:
                         data['created_at'] = standardize_date(data['created_at'])
-                        this_dict = {
-                            'center_bw_id': center_bw_id,
-                            'user_id': origin_user['id'],
-                            'screen_name': origin_user['screen_name'],
-                            'bw_id': bw_id,
-                            'origin': origin,
-                            'repost_count': rp_count,
-                            'fs_count': origin_user['followers_count'],
-                            'fs_user_id': data['user']['id'],
-                            'fs_screen_name': data['user']['screen_name'],
-                            'fs_bw_id': data['id'],
-                            'fs_fans_count': data['user']['followers_count'],
-                            'level': level,
-                            'raw_text': data['raw_text'],
-                            'created_at': data['created_at']
-                        }
-                        # 将待爬取id放入下一轮爬取的id列表，记录将其作为原博时所处level：为当前level+1
-                        idList.append({'bw_id': data['id']})
-                        # 判断是否是规定时间之后产生的微博
-                        if since_date:
-                            since_date = datetime.strptime(since_date, '%Y-%m-%d')
-                            created_at = datetime.strptime(data['created_at'], '%Y-%m-%d')
-                            if (created_at > since_date):
+                        flag = checkLevel(level, data['raw_text'])
+                        if flag:
+                            this_dict = {
+                                'center_bw_id': center_bw_id,
+                                'user_id': origin_user['id'],
+                                'screen_name': origin_user['screen_name'],
+                                'bw_id': bw_id,
+                                'origin': origin,
+                                'repost_count': rp_count,
+                                'fs_count': origin_user['followers_count'],
+                                'fs_user_id': data['user']['id'],
+                                'fs_screen_name': data['user']['screen_name'],
+                                'fs_bw_id': data['id'],
+                                'fs_fans_count': data['user']['followers_count'],
+                                'level': level,
+                                'raw_text': data['raw_text'],
+                                'created_at': data['created_at']
+                            }
+                            # 将待爬取id放入下一轮爬取的id列表(即其作为原博时)
+                            idList.append({'bw_id': data['id']})
+                            # 判断是否是规定时间之后产生的微博
+                            if since_date:
+                                since_date = datetime.strptime(since_date, '%Y-%m-%d')
+                                created_at = datetime.strptime(data['created_at'], '%Y-%m-%d')
+                                if (created_at > since_date):
+                                    if_crawl = False
+                            else:
                                 if_crawl = False
+                            if not if_crawl:
+                                result_list.append(this_dict)
                         else:
-                            if_crawl = False
-                        if not if_crawl:
-                            result_list.append(this_dict)
+                            continue
                     # 将符合规定时间的内容写入csv
                     writer.write_csv(result_list)
                 else:
@@ -190,3 +207,14 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
         # 爬取完所有页数，将idList写入对应的level文件
         if idList:
             temp_writer.write_csv(idList)
+
+
+def checkLevel(level, text):
+    flag = False
+    regex = re.compile(r'//@(\w+?)(\s?):')
+    if '-' in text:  # '-'在正则表达式中有其他用处
+        text = text.replace('-', 's')
+    repost = len(regex.findall(text))
+    if repost == (level - 1):
+        flag = True
+    return flag

@@ -1,6 +1,6 @@
 import csv
-import pandas as pd
 from pandas.core.frame import DataFrame
+from utils.merge_csv import mergeCSV
 
 
 class csvWriter(object):
@@ -54,19 +54,6 @@ class csvWriter(object):
             else:
                 csv_writer.writerows(result_list)
 
-    # 去重
-    # pandas去重无法实现根据条件去重，则很多末层转发的fs_bw_id都为‘Null’
-    # 只能分为两部分，再整合
-    def drop_duplicates(self):
-        df = pd.read_csv(self.filename, header=0)
-        df1 = df.loc[df['fs_bw_id'] == 'Null']
-        df2 = df.loc[df['fs_bw_id'] != 'Null']
-        df1 = df1.drop_duplicates('user_id', keep='last')
-        df2 = df2.drop_duplicates('fs_bw_id', keep='last')
-        df = pd.concat([df1, df2], axis=0)
-        df = df.sort_index(axis=0, ascending=True)
-        df.to_csv(self.filename, index=False)
-
     # 获取要爬取转发关系的列表
     def get_idList(self, bw_id=None):
         with open(self.filename, 'r', encoding='utf-8') as f:
@@ -84,3 +71,7 @@ class csvWriter(object):
                     pos = idList.index(bw_id)  # 必须为字符串形式
                     idList = idList[pos+1:]
             return idList
+
+    def merge_csv(self, temp_dir):
+        if self.repost:
+            mergeCSV(temp_dir, self.filename)

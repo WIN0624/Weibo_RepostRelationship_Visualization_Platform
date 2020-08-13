@@ -17,7 +17,7 @@ from utils.logger import getLogger
 from utils.standarize_date import standardize_date
 
 
-def one_word_get_query_info(wd, writer):
+def word_get_query_info(wd, writer):
     logger = getLogger('getQuery')
     logger.info(f'Keyword: {wd}. Start crawling ...')
     get_query_info(wd, writer, logger)
