@@ -3,29 +3,32 @@
 ## 1. 基本架构
 ### 1.1	代理模块`agent.py`
 其中:
-- `get_header()`负责随机产生请求头部。
-- `get_proxy()`负责获取代理。
+- `get_header`负责随机产生请求头部。
+- `get_proxy`负责获取代理。
 ### 1.2 写入模块`csvWriter.py`
 将此前多个写方法，封装为**csvWriter**类。其中:
-- `__init__()`可以根据检索或获取转发关系，生成不同的csv头部字段，并调用create_csv。
-- `create_csv()`负责产生文件并写入头部。
-- `write_csv()`负责将爬取到的数据，不断追加入文件。
-- `drop_duplicates()`负责处理[转发关系紊乱](#4-转发关系紊乱问题说明)的问题。
-- `get_idList()`负责获取将要爬取转发关系的下一组微博的id列表。
+- `__init__`可以根据检索或获取转发关系，生成不同的csv头部字段，并调用create_csv。
+- `create_csv`负责产生文件并写入头部。
+- `write_csv`负责将爬取到的数据，不断追加入文件。
+- `get_idList`负责获取将要爬取转发关系的下一组微博的id列表。
+- `merge_csv`负责处理整合多个csv文件并去重。
 ### 1.3	获取检索词相关微博模块`get_query_info.py`
 其中：
-- `get_Topic()`。解析页面返回的每条微博的text，获取话题。
-- `get_Text()`。解析页面返回微博，对text进行格式处理。
+- `word_get_query`。负责生成相应日志。
+- `get_Topic`。解析页面返回的每条微博的text，获取话题。
+- `get_Text`。解析页面返回微博，对text进行格式处理。
 - `get_Page`。获取该检索词相关的微博页数，利于之后爬取。
-- `get_query_info()`。基于检索词发送请求，解析检索页面。
+- `get_query_info`。基于检索词发送请求，解析检索页面。
 ### 1.4 获取转发关系模块`get_repost_info.py`
 其中：
-- `get_repost_relationship()`。进行多层爬取，每层需要：
+- `word_repost_relationship`。多进程爬取时，用于生成日志和中间文件以及相应的断点处理。
+- `get_repost_relationship`。爬取转发关系的主逻辑函数。进行多层爬取，每层需要：
     - 读取将要爬取的微博id列表
-    - 对于其中每个id，调用`get_repost_info()`
+    - 对于其中每个id，调用`get_repost_info`
     - 处理该层得到的下一组要爬取微博id的写入。
-- `get_origin_info()`。获取原博的相关信息，辅助`get_repost_info()`。
-- `get_repost_info()`。基于每条相关微博id发送请求，解析该微博页面获取转发信息。
+- `get_origin_info`。获取原博的相关信息，辅助`get_repost_info`。
+- `get_repost_info`。基于每条相关微博id发送请求，解析该微博页面获取转发信息。
+- `checkLevel`。用于处理[转发关系紊乱](#4-转发关系紊乱问题说明)问题。
 ### 1.5 扩充话题模块`get_more_topic.py`
 根据输入的检索词，到微博话题页面检索所有相关话题，将得到的话题列表写入话题文件。
 ### 1.6 时间格式化模块`standarize_date.py`
@@ -35,35 +38,20 @@
 ### 1.8 加载配置模块`loadConfig`
 负责获取用户设置：
 - 日志存储路径`log_dir`
-- 话题存储路径`topic_dir`。此处话题指根据检索词扩充获得的话题，以csv文件存储。
 - 检索词相关微博存储路径`hot__dir`。
 - 转发关系信息存储路径`repost_dir`。
-- 所有待爬取微博id列表的存储路径`repost_temp_dir`。
-- one_word_spider中多进程爬取的转发关系暂存路径`one_word_repost_dir`。
 - 检索词列表`searchlist`。可以列表形式传入，若为文件则设为文件名，将会进行相应的读取操作。
+- 爬取转发关系时开启的进程数`process_num`。
+- 是否进行话题扩充`expand_topic`。布尔型。
+- 话题存储路径`topic_dir`。此处话题指根据检索词扩充获得的话题，以csv文件存储。
 ## 2. 主功能函数
 
 ### 2.1 `word_spider.py`
 - 对 searchList 中每一个词
     - 获取微博检索页面中所有相关微博
-    - 对每条相关微博获取多层转发关系
-- 对 searchList 中每一个词进行话题扩充。用 EPOCH 记录迭代次数。将每一轮迭代的到的扩充话题用 EPOCH 次数标记的文件，下一轮迭代的searchList从此文件中读出。
+    - 对每条相关微博获取多层转发关系（多进程）
+- 对 searchList 中每一个词进行话题扩充。用 EPOCH 记录迭代次数。将每一轮迭代得到的扩充话题输出到用EPOCH 次数标记的文件，下一轮迭代的searchList从此文件中读出。
 
-### 2.2 `pool_spider.py`
-- `split_searchList()`。负责将获取的检索词列表分成较为均匀的5份，作为5个子进程的输入。
-- `pool_spider()`。产生5个子进程，执行`word_spider.py`中的`word_spider()`函数。
-
-### 2.3 `one_word_spider.py` | 补充函数 | 加快转发关系爬取
-- 获取一个检索词在微博检索页面中所有相关微博
-- 将相关微博的总id列表切分成10份
-- 建立进程池（10个进程），传入每个相关微博列表，对其中每个id爬取转发关系
-
-[针对`one_word_spider`增加的相关函数]
-- get_query_info.py：`one_word_get_query_info()`。建立one_word_spider的getQuery日志，获取检索信息。
-- get_repost_info.py：`one_word_get_repost_relationship()`。
-    - 根据进程名生成爬取日志
-    - 获取对应的存储路径，生成csvWriter
-    - 接收id列表，对于其中每个id，调用`get_repost_relationship()`
 ## 3. 待完成内容
 ### 3.1 `user_spider.py`
 - [ ] 根据用户名获取所有微博，并对每条微博获取多层转发关系。可用于之后研究特定大V的热门微博转发情况。
