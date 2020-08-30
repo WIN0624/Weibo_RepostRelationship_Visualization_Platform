@@ -1,5 +1,6 @@
+import os
 import csv
-from pandas.core.frame import DataFrame
+import pandas as pd
 from utils.merge_csv import mergeCSV
 
 
@@ -21,9 +22,10 @@ class csvWriter(object):
 
     # 创建初始空文件
     def create_csv(self):
-        with open(self.filename, 'w', encoding='utf-8', newline='') as f:
-            csv_writer = csv.DictWriter(f, self.header)
-            csv_writer.writeheader()
+        if not os.path.exists(self.filename):
+            with open(self.filename, 'w', encoding='utf-8', newline='') as f:
+                csv_writer = csv.DictWriter(f, self.header)
+                csv_writer.writeheader()
 
     # 写入每个页面的字典列表
     # 当爬取到最后一层时，才会用到关键字参数
@@ -56,21 +58,16 @@ class csvWriter(object):
 
     # 获取要爬取转发关系的列表
     def get_idList(self, bw_id=None):
-        with open(self.filename, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            idList = [row['bw_id'] for row in reader]
-            if self.temp:
-                # 减少转发紊乱导致的重复爬取
-                # 用set会重新排序，则断点失效
-                df = DataFrame(idList)
-                df.columns = ['bw_id']
-                df = df.drop_duplicates(keep='last')
-                idList = df['bw_id']
-                idList = idList.tolist()
-                if bw_id:
-                    pos = idList.index(bw_id)  # 必须为字符串形式
-                    idList = idList[pos+1:]
-            return idList
+        df = pd.read_csv(self.filename, header=0)
+        df = df.drop_duplicates('bw_id', keep='last')
+        idList = df['bw_id'].tolist()
+        if self.search:
+            df.to_csv(self.filename, index=False)
+        if self.temp and bw_id:
+            pos = idList.index(bw_id)  # 数字形式
+            # 断点 or 断点加1
+            idList = idList[pos:]
+        return idList
 
     def merge_csv(self, temp_dir):
         if self.repost:

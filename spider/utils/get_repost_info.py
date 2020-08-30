@@ -2,12 +2,11 @@ import os
 import re
 import time
 import json
-import shutil
 import requests
 from retrying import retry
 from jsonpath import jsonpath
 from datetime import datetime
-from utils.logger import getLogger
+from utils.logger import Logger
 from utils.csvWriter import csvWriter
 from utils.agent import get_header, get_proxy
 from utils.standarize_date import standardize_date
@@ -16,9 +15,10 @@ from utils.standarize_date import standardize_date
 def word_repost_relationship(temp_dir, searchList, breakpos=None):
     # 据进程名生成日志
     name = 'getRepost_' + str(os.getpid())
-    logger = getLogger(name)
+    log = Logger(name)
+    logger = log.getLogger()
     # 每个进程维护一个sublist转发关系的层级目录（临时）
-    level_dir = temp_dir + 'temp/'
+    level_dir = temp_dir + f'temp_{name}/'
     os.mkdir(level_dir)
 
     # 断点处理
@@ -31,15 +31,16 @@ def word_repost_relationship(temp_dir, searchList, breakpos=None):
         repost_writer = csvWriter(repost_file, repost=True, breakpos=True)
         # 先爬取完断点id，再对余下id按常规爬取
         get_repost_relationship(breakpos['center_bw_id'], repost_writer, level_dir, logger, breakpos)
-        searchList = searchList[1:]
+        searchList = searchList[1:]  # 有问题！！断点再看，常常爬取不成
 
     # 常规爬取
     logger.info('Strat getting repost...')
     for id in searchList:
         get_repost_relationship(id, repost_writer, level_dir, logger)
     logger.info('Finish!')
-    # 删除临时目录
-    shutil.rmtree(level_dir)
+    # 爬取完后，删除日志
+    # 日志主要用于处理断点，若爬取完成则不再需要
+    log.remove()
 
 
 # 获取转发关系的主函数
@@ -137,7 +138,6 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
     # 可能出现微博删除或无法获取的情况，则不再获取该bw_id
     else:
         return None
-
     # 转发信息爬取
     if page == 0:
         logger.info(f'Center bw : {center_bw_id}. level: {level}. No repost of this bw {bw_id}.')
@@ -161,7 +161,7 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
                     datas = jsonpath(content, '$.data.data.*')
                     for data in datas:
                         data['created_at'] = standardize_date(data['created_at'])
-                        flag = checkLevel(level, data['raw_text'])
+                        flag = checkLevel(level, origin_user['screen_name'], data['raw_text'])
                         if flag:
                             this_dict = {
                                 'center_bw_id': center_bw_id,
@@ -209,12 +209,24 @@ def get_repost_info(center_bw_id, bw_id, level, writer, logger, temp_writer, sin
             temp_writer.write_csv(idList)
 
 
-def checkLevel(level, text):
+def checkLevel(level, origin_name, text):
     flag = False
     regex = re.compile(r'//@(\w+?)(\s?):')
-    if '-' in text:  # '-'在正则表达式中有其他用处
-        text = text.replace('-', 's')
-    repost = len(regex.findall(text))
-    if repost == (level - 1):
+    text = transfer(text)
+    origin_name = transfer(text)
+    try:
+        fromer = regex.findall(text)[0][0]
+    except IndexError:
+        if level == 1:    # 没查找到相关内容
+            flag = True
+    if level > 1 and fromer == origin_name:   # 转发博文内容的前一级转发与当前原博昵称相同，则层级未紊乱
         flag = True
     return flag
+
+
+def transfer(text):
+    if '-' in text:  # '-'在正则表达式中有其他用处
+        text = text.replace('-', '_')
+    if '·' in text:
+        text = text.replace('·', '_')
+    return text

@@ -1,6 +1,7 @@
 import csv
 import time
 import glob
+import shutil
 import pandas as pd
 
 
@@ -10,19 +11,16 @@ def mergeCSV(repost_temp_dir, filename):
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Start Merging csv Files...')
     with open(filename, 'w', encoding='utf-8-sig', newline='') as f:
         f_csv = csv.writer(f)
-        count = 1
         for file in csv_list:
             with open(file, 'r', encoding='utf-8') as f2:
                 f2_csv = csv.reader(f2)
-                if count == 1:
-                    f_csv.writerows(f2_csv)
-                else:
-                    rows = list(f2_csv)
-                    f_csv.writerows(rows[1:])
-                count += 1
+                rows = list(f2_csv)
+                f_csv.writerows(rows[1:])
     # 去重
     drop_duplicates(filename)
     print(f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}]  Finish Merging!')
+    # 删除中间目录
+    shutil.rmtree(repost_temp_dir)
 
 
 # 去重

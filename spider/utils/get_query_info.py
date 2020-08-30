@@ -13,12 +13,13 @@ from utils.agent import get_header, get_proxy
 from datetime import datetime
 from jsonpath import jsonpath
 from urllib.parse import quote
-from utils.logger import getLogger
+from utils.logger import Logger
 from utils.standarize_date import standardize_date
 
 
 def word_get_query_info(wd, writer):
-    logger = getLogger('getQuery')
+    log = Logger(f'getQuery_{wd}')
+    logger = log.getLogger()
     logger.info(f'Keyword: {wd}. Start crawling ...')
     get_query_info(wd, writer, logger)
 
