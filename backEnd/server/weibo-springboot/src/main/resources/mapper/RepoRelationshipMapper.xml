@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weibo.weibo.mapper.RepoRelationshipMapper">
+
+    <select id="selectRepoRelationshipByCenter_bw_id" resultType="RepoRelationship">
+        select user_id,screen_name,bw_id,reposts_count,fs_count,fs_user_id,fs_screen_name,fs_bw_id,fs_fans_count,level
+        from load_test2 where center_bw_id=#{center_bw_id} order by level;
+    </select>
+</mapper>
