@@ -11,13 +11,11 @@ import java.util.List;
 
 
 /**
- * @author lijy3
- * @version 1.0
  * @ClassName BaseDao
  * @Description provide basic operation to DataBase
- * @date 2020/5/28 16:10
  */
 public  class BaseDao {
+
     /**
      * used to update DataBase
      * @param conn
@@ -45,8 +43,6 @@ public  class BaseDao {
             jdbcUtils.closeResource(null,ps);
         }
     }
-
-
 
     /**
      * used to select from database and return a List
@@ -95,9 +91,9 @@ public  class BaseDao {
      * @param sql
      * @param args
      * @param <T>
-     * @return
+     * @return JSONArray
      */
-    public static <T> org.json.JSONArray findJSONArray(Class<T> clazz, Connection conn,String sql, Object... args)
+    public static <T> JSONArray findJSONArray(Class<T> clazz, Connection conn,String sql, Object... args)
     {
         PreparedStatement ps=null;
         JSONArray ajson=null;
@@ -136,6 +132,15 @@ public  class BaseDao {
         return ajson;
     }
 
+    /**
+     * used to select from database and return a JSONObject
+     * @param clazz
+     * @param conn
+     * @param sql
+     * @param args
+     * @param <T>
+     * @return JSONObject
+     */
     public static <T> JSONObject findJSONObject(Class<T> clazz, Connection conn,String sql, Object... args)
     {
         PreparedStatement ps=null;
@@ -179,7 +184,7 @@ public  class BaseDao {
      * @param sql
      * @param args
      * @param <E>
-     * @return
+     * @return <E>
      */
     public static <E> E getValue(Connection conn,String sql,Object...args)
     {
@@ -202,8 +207,6 @@ public  class BaseDao {
         }
         return null;
     }
-
-
 }
 
 
