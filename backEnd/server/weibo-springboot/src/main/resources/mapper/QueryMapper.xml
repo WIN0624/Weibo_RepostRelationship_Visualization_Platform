@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weibo.weibo.mapper.QueryMapper">
+
+    <select id="selectQueryByBw_ids" parameterType="java.util.List" resultType="Query">
+        select *
+        from `load_test`
+        where `bw_id` in
+        <foreach collection="bw_ids" item="bw_id" index="index"
+                 open="(" close=")" separator=",">
+            #{bw_id}
+        </foreach>
+    </select>
+</mapper>
