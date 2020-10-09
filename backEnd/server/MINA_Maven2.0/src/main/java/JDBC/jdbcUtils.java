@@ -1,31 +1,37 @@
 package JDBC;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
 /**
- * @author lijy3
- * @version 1.0
  * @ClassName jdbcUtils
  * @Description provide getConnection and closeConnect functions, read from jdbc.properties
- * @date 2020/5/24 18:12
  */
 public class jdbcUtils {
     /**
      * getConnection
      * @return conn
      */
-    public static Connection getConnection(){
+
+    public  static Connection getConnection(){
+        Properties pros= new Properties();
+        InputStream inputStream= jdbcUtils.class.getClassLoader().getResourceAsStream("jdbc.properties");
+        try {
+            pros.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String user="root";
-//pros.getProperty("user");
+        user=pros.getProperty("user");
         String password="toor";
-//pros.getProperty("password");
+        password=pros.getProperty("password");
         String url="jdbc:mysql://localhost:3306/weibo";
-//pros.getProperty("url");
+        url=pros.getProperty("url");
         String driverClass="com.mysql.jdbc.Driver";
-//pros.getProperty("driverClass");
+        driverClass=pros.getProperty("driverClass");
         try {
             Class.forName(driverClass);
 
@@ -37,7 +43,7 @@ public class jdbcUtils {
             conn= DriverManager.getConnection(url,user,password);
 
         } catch (SQLException e) {
-            System.out.println("���ݿ�����ʧ��");
+            System.out.println("Something Wrong when connecting to the DataBase!");
             e.printStackTrace();
         }
         return conn;

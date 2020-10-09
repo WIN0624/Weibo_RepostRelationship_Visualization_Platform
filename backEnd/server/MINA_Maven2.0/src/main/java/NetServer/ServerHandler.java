@@ -51,7 +51,7 @@ public class ServerHandler extends IoHandlerAdapter {
                     System.out.println("尝试输出一个id:" + keys.get(2).toString());
 
                     // 调用mysql方法
-                    String jsonInfo =Dao.selectQueryByBw_idsString(keys);
+                    String jsonInfo =queryDao.selectQueryByBw_idsString(keys);
                     System.out.println("完成mysql方法调用");
 
                     // 写入传输用的实体类
@@ -68,7 +68,7 @@ public class ServerHandler extends IoHandlerAdapter {
                     String bw_id = query;
 
                     // 调用mysql方法
-                    String jsonInfo = Dao.selectAllReporelationshipByBw_idString(bw_id);
+                    String jsonInfo = repoRelationshipDao.selectAllReporelationshipByBw_idString(bw_id);
 
                     // 写入传输用的实体类
                     resp.setJsonInfo(jsonInfo);
@@ -78,7 +78,7 @@ public class ServerHandler extends IoHandlerAdapter {
 		    String bw_id = query;
 		    
 		    // 调用mysql方法，传入一个id，返回一个微博内容；传入id时所使用的变量是bw_id
-		    String jsonInfo =Dao.selectQueryByBw_idString(bw_id); 
+		    String jsonInfo =queryDao.selectQueryByBw_idString(bw_id); 
 		    
 		    //写入传输用的实体类
 		    resp.setJsonInfo(jsonInfo);

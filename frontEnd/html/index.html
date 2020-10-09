@@ -1,0 +1,56 @@
+<!-- 检索页 -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../css/config.css">
+    <title>Weibo Spider</title>
+
+</head>
+
+<body>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../js/arttemplate.js"></script>
+    <script src="../js/util.js"></script>
+
+    <div class="header">
+        <form>
+            <h1>Weibo Spider</h1>
+
+            <div class="form-box">
+                <input type="text" class="search-field keywords" placeholder="quentions.." id="searchinput">
+                <button class="search-btn" type="button" id="btn" ">search</button>
+                <!-- onclick="tiaozhuan()" -->
+                <script type="text/javascript">
+                    var tiaozhuan = function () {
+                        document.location.href = 'search_notemp.html?query=' + $(".keywords").val();
+                    };
+
+                </script>
+
+            </div>
+
+        </form>
+    </div>
+    <script>
+        $(function () {
+            //敲回车键，跳转页面
+            //回车的时候同时触发了表单提交事件，在回车事件里面写一个：return false;
+            $(".keywords").keydown(function (e) {
+                if (e.keyCode === 13) {
+                    tiaozhuan()
+                    return false
+                }
+            })
+
+            //点击搜索按钮
+            $("#btn").click(function () {
+                tiaozhuan()
+            })
+
+        });
+    </script>
+</body>
+
+</html>
