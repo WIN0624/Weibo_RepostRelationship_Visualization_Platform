@@ -12,26 +12,28 @@ from utils.agent import get_header, get_proxy
 from utils.standarize_date import standardize_date
 
 
-def word_repost_relationship(temp_dir, searchList, breakpos=None):
+def word_repost_relationship(batch_num, temp_dir, searchList, breakpos=None):
     # 据进程名生成日志
-    name = 'getRepost_' + str(os.getpid())
+    name = f'getRepost_batchNum{str(batch_num)}'
     log = Logger(name)
     logger = log.getLogger()
-    # 每个进程维护一个sublist转发关系的层级目录（临时）
-    level_dir = temp_dir + f'temp_{name}/'
-    os.mkdir(level_dir)
 
     # 断点处理
     if not breakpos:
+        # 每个进程维护一个sublist转发关系的层级目录（临时）
+        level_dir = temp_dir + f'temp_{name}/'
+        if not os.path.exists(level_dir):
+            os.mkdir(level_dir)
         # 生成写文件
         repost_file = temp_dir + name + '.csv'
         repost_writer = csvWriter(repost_file, repost=True)
     else:
+        level_dir = temp_dir + breakpos['level_dir']
         repost_file = temp_dir + breakpos['repost_file']
         repost_writer = csvWriter(repost_file, repost=True, breakpos=True)
         # 先爬取完断点id，再对余下id按常规爬取
         get_repost_relationship(breakpos['center_bw_id'], repost_writer, level_dir, logger, breakpos)
-        searchList = searchList[1:]  # 有问题！！断点再看，常常爬取不成
+        searchList = searchList[1:]
 
     # 常规爬取
     logger.info('Strat getting repost...')
@@ -59,14 +61,14 @@ def get_repost_relationship(bw_id, repost_writer, level_dir, logger, breakpos=No
         level = breakpos['level']
         break_file = level_dir + f'Level_{level}_{center_bw_id}.csv'
         temp_writer = csvWriter(break_file, temp=True, breakpos=True)
-        idList = temp_writer.get_idList(breakpos.get('breakid'))
+        idList = temp_writer.get_idList(breakpos.get('break_id'))
 
     # 爬取转发
     while len(idList) > 0:
         # 创建下一层的原博文件，即该层的转发微博的微博id
         temp_file = level_dir + f'Level_{level+1}_{center_bw_id}.csv'
-        if level == breakpos and breakpos.get('breakid'):
-            temp_writer = csvWriter(break_file, temp=True, breakpos=True)   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
+        if level == breakpos and breakpos.get('break_id'):
+            temp_writer = csvWriter(temp_file, temp=True, breakpos=True)   # 断点为本层的中间，所以其下一层文件早已创建，直接往后添加
         else:
             temp_writer = csvWriter(temp_file, temp=True)                   # 非断点，则照常创建新文件
 

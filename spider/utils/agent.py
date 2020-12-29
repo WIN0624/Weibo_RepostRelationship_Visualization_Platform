@@ -5,7 +5,7 @@ ua = UserAgent(verify_ssl=False)
 
 
 def get_header():
-    return {'User-Agent': ua.random}
+    return {'User-Agent': ua.random, 'Cookie': 'xq_a_token=3242a6863ac15761c18a8469b89065b03bd5e164'}
 
 
 def get_proxy():
