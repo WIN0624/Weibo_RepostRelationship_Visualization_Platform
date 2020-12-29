@@ -1,0 +1,23 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.weibo.weibo.grcp;
+
+//请求
+message QueryRequest {
+    //类型
+    string queryType = 1;
+    //请求内容
+    string query = 2;
+    //分页的页数
+    string page = 3;
+}
+
+//返回检索结果
+message QueryResponse {
+    string response = 1;
+}
+
+
+service SearchService {
+    rpc searchQuery(QueryRequest) returns (QueryResponse);
+}
