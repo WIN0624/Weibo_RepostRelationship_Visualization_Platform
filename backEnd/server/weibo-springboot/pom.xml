@@ -17,7 +17,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<mysql.version>8.0.21</mysql.version>
+		<mysql.version>8.0.28</mysql.version>
 		<mybatis.mapper.version>2.0.4</mybatis.mapper.version>
 		<grpc-starter-version>3.4.1</grpc-starter-version>
 		<io.grpc.version>1.23.0</io.grpc.version>
